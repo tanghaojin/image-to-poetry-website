@@ -1,0 +1,21 @@
+{
+  "verifiedAt": "2026-09-12T17:16:53.4372195+08:00",
+  "model": "gemini-3.8-flash",
+  "endpoint": "Google Gemini API v1beta generateContent",
+  "image": "public/images/examples/winter-boat.jpg",
+  "analysisCopy": {
+    "width": 768,
+    "height": 414,
+    "bytes": 46251,
+    "mimeType": "image/jpeg"
+  },
+  "available": "text-only-confirmed",
+  "imageUnderstandingPassed": false,
+  "attempts": {
+    "fullSizeImageAttempts": 3,
+    "fullSizeResult": "503 UNAVAILABLE",
+    "textControl": "passed",
+    "resizedImageAttempt": "503 UNAVAILABLE"
+  },
+  "secretStored": false
+}

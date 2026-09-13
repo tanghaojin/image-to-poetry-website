@@ -1,0 +1,27 @@
+{
+  "verifiedAt": "2026-09-12T17:46:03.9827459+08:00",
+  "tokenAuthentication": {
+    "endpoint": "https://api.github.com/user",
+    "status": 200,
+    "passed": true,
+    "elapsedMs": 1325
+  },
+  "githubModels": {
+    "catalog": {
+      "endpoint": "https://models.github.ai/catalog/models",
+      "status": 410,
+      "elapsedMs": 1500,
+      "providerMessage": "GitHub Models is temporarily unavailable as part of a scheduled retirement brownout."
+    },
+    "inference": {
+      "endpoint": "https://models.github.ai/inference/chat/completions",
+      "testModel": "openai/gpt-4.1-mini",
+      "status": 410,
+      "elapsedMs": 964,
+      "providerMessage": "GitHub Models is temporarily unavailable as part of a scheduled retirement brownout."
+    },
+    "usable": false
+  },
+  "officialRetirementDate": "2026-07-30",
+  "secretStored": false
+}

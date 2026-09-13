@@ -1,0 +1,23 @@
+{
+  "verifiedAt": "2026-09-12T17:02:17.4761909+08:00",
+  "primaryModel": "glm-4.6v-flash",
+  "primaryObservedErrorCode": "1305",
+  "actualModel": "glm-4.1v-thinking-flash",
+  "image": "public/images/examples/winter-boat.jpg",
+  "elapsedMs": 9447,
+  "result": {
+    "subjects": [
+      "小船",
+      "渔人",
+      "湖水",
+      "霜树",
+      "浮标"
+    ],
+    "season": "冬季",
+    "time": "清晨",
+    "weather": "阴冷多雾",
+    "mood": "空谷清寒",
+    "sceneSummary": "湖上渔人乘舟，霜林雾水朦胧",
+    "confidence": 0.8
+  }
+}

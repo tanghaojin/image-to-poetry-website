@@ -1,0 +1,86 @@
+{
+  "verifiedAt": "2026-09-12T17:18:20.8736360+08:00",
+  "endpoint": "Google Gemini API v1beta generateContent",
+  "image": "public/images/examples/winter-boat.jpg",
+  "analysisCopy": {
+    "width": 768,
+    "height": 414,
+    "bytes": 46251,
+    "mimeType": "image/jpeg"
+  },
+  "tests": [
+    {
+      "model": "gemini-3.7-flash",
+      "available": true,
+      "imageUnderstandingPassed": true,
+      "attempt": 1,
+      "elapsedMs": 4710,
+      "finishReason": "STOP",
+      "usage": {
+        "promptTokens": 1174,
+        "outputTokens": 101,
+        "thoughtsTokens": 392,
+        "totalTokens": 1667
+      },
+      "result": {
+        "subjects": [
+          "划船者",
+          "小船",
+          "湖泊",
+          "雾凇树林",
+          "水雾"
+        ],
+        "season": "冬季",
+        "time": "清晨",
+        "weather": "有雾",
+        "mood": "寒江独钓",
+        "sceneSummary": "寒冬清晨水面薄雾弥漫，一人乘小舟划行于湖中，背景为白霜覆盖的树林。",
+        "confidence": 0.95
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "elapsedMs": 4710
+        }
+      ]
+    },
+    {
+      "model": "gemini-3.6-flash",
+      "available": true,
+      "imageUnderstandingPassed": true,
+      "attempt": 1,
+      "elapsedMs": 10492,
+      "finishReason": "STOP",
+      "usage": {
+        "promptTokens": 1174,
+        "outputTokens": 78,
+        "thoughtsTokens": 919,
+        "totalTokens": 2171
+      },
+      "result": {
+        "subjects": [
+          "小船",
+          "划船人",
+          "湖泊",
+          "白霜树林",
+          "雾气"
+        ],
+        "season": "冬季",
+        "time": "早晨",
+        "weather": "阴雾",
+        "mood": "孤寂",
+        "sceneSummary": "晨雾弥漫的湖面上，一人划着小船独自前行，背景为挂满白霜的树林。",
+        "confidence": 0.95
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "elapsedMs": 10492
+        }
+      ]
+    }
+  ],
+  "secretStored": false
+}

@@ -1,0 +1,70 @@
+{
+  "verifiedAt": "2026-09-12T19:48:46.0799265+08:00",
+  "regionDetection": {
+    "endpoint": "https://api.country.is/",
+    "cors": "*",
+    "cache": "sessionStorage",
+    "storedValue": "CN or GLOBAL only",
+    "fullIpStored": false
+  },
+  "routes": {
+    "CN": [
+      "glm-4.6v-flash",
+      "glm-4.1v-thinking-flash",
+      "gemini-3.7-flash",
+      "gemini-3.6-flash"
+    ],
+    "GLOBAL": [
+      "gemini-3.7-flash",
+      "gemini-3.6-flash",
+      "glm-4.6v-flash",
+      "glm-4.1v-thinking-flash"
+    ],
+    "UNKNOWN": [
+      "glm-4.6v-flash",
+      "gemini-3.7-flash",
+      "glm-4.1v-thinking-flash",
+      "gemini-3.6-flash"
+    ]
+  },
+  "browserTests": [
+    {
+      "route": "GLOBAL",
+      "source": "live GeoIP",
+      "attempts": [
+        {
+          "model": "gemini-3.7-flash",
+          "outcome": "busy"
+        },
+        {
+          "model": "gemini-3.6-flash",
+          "outcome": "success"
+        }
+      ],
+      "result": {
+        "mood": "清寒",
+        "confidence": 0.95
+      }
+    },
+    {
+      "route": "CN",
+      "source": "simulated cached route",
+      "attempts": [
+        {
+          "model": "glm-4.6v-flash",
+          "outcome": "busy"
+        },
+        {
+          "model": "glm-4.1v-thinking-flash",
+          "outcome": "success"
+        }
+      ],
+      "result": {
+        "mood": "清寂",
+        "confidence": 0.8
+      },
+      "cacheRestoredTo": "GLOBAL"
+    }
+  ],
+  "secretStored": false
+}

@@ -1,0 +1,41 @@
+{
+  "verifiedAt": "2026-09-12T17:12:46.1371155+08:00",
+  "endpoint": "Google Gemini API v1beta generateContent",
+  "authentication": "passed",
+  "modelCatalog": {
+    "totalModels": 50,
+    "requestedModels": [
+      {
+        "model": "gemini-3-flash-preview",
+        "listed": true,
+        "supportsGenerateContent": true
+      },
+      {
+        "model": "gemini-2.5-flash",
+        "listed": true,
+        "supportsGenerateContent": true
+      }
+    ]
+  },
+  "generationTests": [
+    {
+      "model": "gemini-3-flash-preview",
+      "available": true,
+      "elapsedMs": 1803,
+      "finishReason": "STOP",
+      "response": "测试成功",
+      "promptTokens": 15,
+      "outputTokens": 2,
+      "thoughtsTokens": 86
+    },
+    {
+      "model": "gemini-2.5-flash",
+      "available": false,
+      "elapsedMs": 721,
+      "httpStatus": 404,
+      "errorStatus": "NOT_FOUND",
+      "summary": "Model is no longer available to new users; provider recommends gemini-3.6-flash."
+    }
+  ],
+  "secretStored": false
+}

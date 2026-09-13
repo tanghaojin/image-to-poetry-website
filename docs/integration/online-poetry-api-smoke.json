@@ -1,0 +1,66 @@
+{
+  "testedAt": "2026-09-12",
+  "origin": "http://localhost:3100",
+  "tests": [
+    {
+      "provider": "poetry.palemoky.com",
+      "endpoint": "/api/stats",
+      "status": 200,
+      "cors": "*",
+      "result": {
+        "poems": 371313,
+        "authors": 13577
+      }
+    },
+    {
+      "provider": "poetry.palemoky.com",
+      "endpoint": "/api/search?q=<two-characters>",
+      "status": 400,
+      "observation": "q must be at least 3 characters"
+    },
+    {
+      "provider": "poetry.palemoky.com",
+      "endpoint": "/api/search?q=<concrete-famous-line>",
+      "status": 200,
+      "observation": "canonical work was recalled, but not ranked first; duplicates and text variants were present"
+    },
+    {
+      "provider": "poetry.palemoky.com",
+      "endpoint": "/api/search?q=<abstract-mood>",
+      "status": 200,
+      "observation": "empty result; endpoint behaves as full-text rather than semantic search"
+    },
+    {
+      "provider": "poetry.palemoky.com",
+      "endpoint": "/api/v1/*",
+      "status": 404,
+      "observation": "hosted routes differ from self-hosted README examples"
+    },
+    {
+      "provider": "v1.jinrishici.com",
+      "endpoint": "/all.json",
+      "status": 200,
+      "cors": "*",
+      "observation": "random sentence only; no dynasty or full poem"
+    },
+    {
+      "provider": "v2.jinrishici.com",
+      "endpoint": "/sentence",
+      "status": 200,
+      "cors": "http://localhost:3100",
+      "observation": "full origin returned; match tags are derived from visitor environment, not uploaded image"
+    },
+    {
+      "provider": "www.caoxingyu.club",
+      "endpoint": "/guwen/selectbykeyword",
+      "status": null,
+      "observation": "TLS connection failed during test"
+    }
+  ],
+  "decision": {
+    "onlineCandidateRecall": "poetry.palemoky.com",
+    "finalAuthority": "locally curated and verified corpus",
+    "randomFallback": "jinrishici V2 optional",
+    "directLlmVerseGeneration": false
+  }
+}
