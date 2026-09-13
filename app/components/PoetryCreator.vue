@@ -83,12 +83,12 @@
     <template v-else-if="state === 'editor' && poetryMatch">
       <div class="preview-frame poster-preview">
         <span class="preview-label"><i /> 实时预览</span>
-        <div class="poster-canvas" :class="posterClasses">
+        <div ref="posterCanvas" class="poster-canvas" :class="posterClasses">
           <img :src="selectedImage" alt="配诗海报预览">
-          <div class="vertical-poem">
-            <strong><template v-for="line in posterLines" :key="line">{{ line }}<br></template></strong>
-            <small v-if="showAttribution">{{ verticalAttribution }}</small>
-            <span v-if="showStamp" class="mini-stamp">寻诗</span>
+          <div ref="posterOverlay" class="vertical-poem">
+            <strong ref="posterStrong"><template v-for="line in posterLines" :key="line">{{ line }}<br></template></strong>
+            <small v-if="showAttribution" ref="posterAttribution">{{ verticalAttribution }}</small>
+            <span v-if="showStamp" ref="posterStamp" class="mini-stamp">寻诗</span>
           </div>
         </div>
         <button type="button" class="text-action" @click="reset">重新选择图片</button>
@@ -173,6 +173,11 @@ const showStamp = ref(true)
 const showFullPoem = ref(false)
 const isGenerating = ref(false)
 const posterUrl = ref<string | null>(null)
+const posterCanvas = ref<HTMLElement | null>(null)
+const posterOverlay = ref<HTMLElement | null>(null)
+const posterStrong = ref<HTMLElement | null>(null)
+const posterAttribution = ref<HTMLElement | null>(null)
+const posterStamp = ref<HTMLElement | null>(null)
 let objectUrl: string | null = null
 let analysisRequestId = 0
 const { analyzeAndMatch, cancel: cancelImagePoetry } = useImagePoetry()
@@ -290,23 +295,30 @@ function loadPosterImage() {
   })
 }
 
-function drawOutlinedText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, outlined: boolean) {
+function drawOutlinedText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, outlined: boolean, strokeWidth = size * .095) {
   if (outlined) {
     ctx.lineJoin = 'round'
     ctx.miterLimit = 2
     ctx.strokeStyle = 'rgba(0, 0, 0, .86)'
-    ctx.lineWidth = Math.max(2, size * .095)
+    ctx.lineWidth = Math.max(1, strokeWidth)
     ctx.strokeText(text, x, y)
   }
   ctx.fillText(text, x, y)
 }
 
 function drawVerticalText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, outlined = false) {
-  ;[...text].forEach((char, index) => drawOutlinedText(ctx, char, x, y + index * size * 1.18, size, outlined))
+  ;[...text].forEach((char, index) => drawOutlinedText(ctx, char, x, y + index * size * 1.08, size, outlined))
+}
+
+function numericStyle(style: CSSStyleDeclaration, property: 'fontSize' | 'lineHeight' | 'letterSpacing', fallback: number) {
+  const value = Number.parseFloat(style[property])
+  return Number.isFinite(value) ? value : fallback
 }
 
 async function renderPosterBlob() {
   try {
+    await nextTick()
+    await document.fonts.ready
     const image = await loadPosterImage()
     const canvas = document.createElement('canvas')
     canvas.width = image.naturalWidth
@@ -315,48 +327,85 @@ async function renderPosterBlob() {
     if (!ctx) return
 
     ctx.drawImage(image, 0, 0)
-    const size = Math.max(34, Math.round(Math.min(canvas.width, canvas.height) * .043))
+    const preview = posterCanvas.value
+    const overlay = posterOverlay.value
+    const strong = posterStrong.value
+    if (!preview || !overlay || !strong) return
+
+    const previewRect = preview.getBoundingClientRect()
+    const overlayRect = overlay.getBoundingClientRect()
+    const strongRect = strong.getBoundingClientRect()
+    const scaleX = canvas.width / previewRect.width
+    const scaleY = canvas.height / previewRect.height
+    const strongStyle = getComputedStyle(strong)
+    const previewFontSize = numericStyle(strongStyle, 'fontSize', 34)
+    const previewLineHeight = numericStyle(strongStyle, 'lineHeight', previewFontSize * 1.28)
+    const previewLetterSpacing = numericStyle(strongStyle, 'letterSpacing', previewFontSize * .08)
+    const previewStrokeWidth = Number.parseFloat(strongStyle.webkitTextStrokeWidth) || 1
+    const size = previewFontSize * scaleX
     const ink = textColor.value === '米白' ? '#fffaf0' : textColor.value === '朱砂' ? '#b54836' : '#171512'
     const outlined = textColor.value === '米白'
     const fontFamily = font.value === '宋体' ? 'SimSun, serif' : font.value === '行楷' ? 'STXingkai, KaiTi, serif' : 'KaiTi, serif'
     ctx.fillStyle = ink
     ctx.textAlign = 'center'
     ctx.textBaseline = 'top'
-    ctx.font = `600 ${size}px ${fontFamily}`
+    ctx.font = `700 ${size}px ${fontFamily}`
 
     if (layout.value === '古意竖排') {
-      const top = position.value === '上' ? canvas.height * .12 : position.value === '下' ? canvas.height * .5 : canvas.height * .25
-      posterLines.value.forEach((line, index) => drawVerticalText(ctx, line, canvas.width * (.86 - index * .065), top, size, outlined))
-      if (showAttribution.value) {
-        const attributionSize = Math.max(18, Math.round(size * .58))
+      const top = (strongRect.top - previewRect.top) * scaleY
+      const firstColumnX = (strongRect.right - previewRect.left - previewLineHeight / 2) * scaleX
+      const columnStep = previewLineHeight * scaleX
+      const characterStep = (previewFontSize + previewLetterSpacing) * scaleY
+      posterLines.value.forEach((line, index) => {
+        ;[...line].forEach((char, charIndex) => drawOutlinedText(ctx, char, firstColumnX - index * columnStep, top + charIndex * characterStep, size, outlined, previewStrokeWidth * scaleX))
+      })
+      if (showAttribution.value && posterAttribution.value) {
+        const attributionRect = posterAttribution.value.getBoundingClientRect()
+        const attributionStyle = getComputedStyle(posterAttribution.value)
+        const attributionSize = numericStyle(attributionStyle, 'fontSize', previewFontSize * .55) * scaleX
         ctx.font = `${attributionSize}px ${fontFamily}`
-        drawVerticalText(ctx, verticalAttribution.value, canvas.width * .925, top, attributionSize, outlined)
+        const attributionX = (attributionRect.left + attributionRect.width / 2 - previewRect.left) * scaleX
+        const attributionY = (attributionRect.top - previewRect.top) * scaleY
+        const attributionSpacing = numericStyle(attributionStyle, 'letterSpacing', attributionSize * .04 / scaleX) * scaleY
+        const attributionStrokeWidth = (Number.parseFloat(attributionStyle.webkitTextStrokeWidth) || 1) * scaleX
+        ;[...verticalAttribution.value].forEach((char, index) => drawOutlinedText(ctx, char, attributionX, attributionY + index * (attributionSize + attributionSpacing), attributionSize, outlined, attributionStrokeWidth))
       }
     } else {
-      const bandY = position.value === '上' ? canvas.height * .08 : position.value === '下' ? canvas.height * .7 : canvas.height * .39
-      const bandH = size * (layout.value === '画心题跋' ? 3.2 : 2.5)
+      const bandX = (overlayRect.left - previewRect.left) * scaleX
+      const bandY = (overlayRect.top - previewRect.top) * scaleY
+      const bandW = overlayRect.width * scaleX
+      const bandH = overlayRect.height * scaleY
       ctx.fillStyle = layout.value === '画心题跋' ? 'rgba(244,240,231,.88)' : 'rgba(17,15,12,.38)'
-      ctx.fillRect(canvas.width * .08, bandY, canvas.width * .84, bandH)
+      ctx.fillRect(bandX, bandY, bandW, bandH)
       ctx.fillStyle = ink
-      ctx.font = `600 ${size}px ${fontFamily}`
-      drawOutlinedText(ctx, posterText.value, canvas.width / 2, bandY + size * .42, size, outlined)
-      if (showAttribution.value) {
-        const attributionSize = Math.round(size * .43)
+      ctx.font = `700 ${size}px ${fontFamily}`
+      const textX = (strongRect.left + strongRect.width / 2 - previewRect.left) * scaleX
+      const textY = (strongRect.top - previewRect.top) * scaleY
+      posterLines.value.forEach((line, index) => drawOutlinedText(ctx, line, textX, textY + index * previewLineHeight * scaleY, size, outlined, previewStrokeWidth * scaleX))
+      if (showAttribution.value && posterAttribution.value) {
+        const attributionRect = posterAttribution.value.getBoundingClientRect()
+        const attributionStyle = getComputedStyle(posterAttribution.value)
+        const attributionSize = numericStyle(attributionStyle, 'fontSize', previewFontSize * .43) * scaleX
         ctx.font = `${attributionSize}px ${fontFamily}`
-        drawOutlinedText(ctx, poemAttribution.value, canvas.width / 2, bandY + size * 1.65, attributionSize, outlined)
+        const attributionStrokeWidth = (Number.parseFloat(attributionStyle.webkitTextStrokeWidth) || 1) * scaleX
+        drawOutlinedText(ctx, poemAttribution.value, (attributionRect.left + attributionRect.width / 2 - previewRect.left) * scaleX, (attributionRect.top - previewRect.top) * scaleY, attributionSize, outlined, attributionStrokeWidth)
       }
     }
 
-    if (showStamp.value) {
-      const stampSize = Math.round(size * .82)
+    if (showStamp.value && posterStamp.value) {
+      const stampRect = posterStamp.value.getBoundingClientRect()
+      const stampStyle = getComputedStyle(posterStamp.value)
+      const stampX = (stampRect.left - previewRect.left) * scaleX
+      const stampY = (stampRect.top - previewRect.top) * scaleY
+      const stampW = stampRect.width * scaleX
+      const stampH = stampRect.height * scaleY
       ctx.strokeStyle = '#b54836'
       ctx.lineWidth = Math.max(2, canvas.width / 900)
-      const stampX = canvas.width * .9
-      const stampY = layout.value === '古意竖排' ? canvas.height * .045 : canvas.height * .82
-      ctx.strokeRect(stampX, stampY, stampSize, stampSize)
+      ctx.strokeRect(stampX, stampY, stampW, stampH)
       ctx.fillStyle = '#b54836'
-      ctx.font = `${Math.round(stampSize * .38)}px KaiTi, serif`
-      ctx.fillText('寻诗', stampX + stampSize / 2, stampY + stampSize * .18)
+      const stampFontSize = numericStyle(stampStyle, 'fontSize', 10) * scaleX
+      ctx.font = `${stampFontSize}px KaiTi, serif`
+      drawVerticalText(ctx, '寻诗', stampX + stampW / 2, stampY + stampFontSize * .35, stampFontSize)
     }
 
     return await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', .94))
