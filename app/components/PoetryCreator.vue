@@ -345,11 +345,14 @@ async function renderPosterBlob() {
     const size = previewFontSize * scaleX
     const ink = textColor.value === '米白' ? '#fffaf0' : textColor.value === '朱砂' ? '#b54836' : '#171512'
     const outlined = textColor.value === '米白'
-    const fontFamily = font.value === '宋体' ? 'SimSun, serif' : font.value === '行楷' ? 'STXingkai, KaiTi, serif' : 'KaiTi, serif'
+    // Canvas 直接复用预览文字的实际计算字体，避免 DOM 预览与导出图片
+    // 分别落到不同的字体回退链，造成字号和字距看起来不一致。
+    const fontFamily = strongStyle.fontFamily || 'KaiTi, serif'
+    const fontWeight = strongStyle.fontWeight || '700'
     ctx.fillStyle = ink
     ctx.textAlign = 'center'
     ctx.textBaseline = 'top'
-    ctx.font = `700 ${size}px ${fontFamily}`
+    ctx.font = `${fontWeight} ${size}px ${fontFamily}`
 
     if (layout.value === '古意竖排') {
       const top = (strongRect.top - previewRect.top) * scaleY
@@ -363,7 +366,7 @@ async function renderPosterBlob() {
         const attributionRect = posterAttribution.value.getBoundingClientRect()
         const attributionStyle = getComputedStyle(posterAttribution.value)
         const attributionSize = numericStyle(attributionStyle, 'fontSize', previewFontSize * .55) * scaleX
-        ctx.font = `${attributionSize}px ${fontFamily}`
+        ctx.font = `${attributionStyle.fontWeight || '400'} ${attributionSize}px ${attributionStyle.fontFamily || fontFamily}`
         const attributionX = (attributionRect.left + attributionRect.width / 2 - previewRect.left) * scaleX
         const attributionY = (attributionRect.top - previewRect.top) * scaleY
         const attributionSpacing = numericStyle(attributionStyle, 'letterSpacing', attributionSize * .04 / scaleX) * scaleY
@@ -378,7 +381,7 @@ async function renderPosterBlob() {
       ctx.fillStyle = layout.value === '画心题跋' ? 'rgba(244,240,231,.88)' : 'rgba(17,15,12,.38)'
       ctx.fillRect(bandX, bandY, bandW, bandH)
       ctx.fillStyle = ink
-      ctx.font = `700 ${size}px ${fontFamily}`
+      ctx.font = `${fontWeight} ${size}px ${fontFamily}`
       const textX = (strongRect.left + strongRect.width / 2 - previewRect.left) * scaleX
       const textY = (strongRect.top - previewRect.top) * scaleY
       posterLines.value.forEach((line, index) => drawOutlinedText(ctx, line, textX, textY + index * previewLineHeight * scaleY, size, outlined, previewStrokeWidth * scaleX))
@@ -386,7 +389,7 @@ async function renderPosterBlob() {
         const attributionRect = posterAttribution.value.getBoundingClientRect()
         const attributionStyle = getComputedStyle(posterAttribution.value)
         const attributionSize = numericStyle(attributionStyle, 'fontSize', previewFontSize * .43) * scaleX
-        ctx.font = `${attributionSize}px ${fontFamily}`
+        ctx.font = `${attributionStyle.fontWeight || '400'} ${attributionSize}px ${attributionStyle.fontFamily || fontFamily}`
         const attributionStrokeWidth = (Number.parseFloat(attributionStyle.webkitTextStrokeWidth) || 1) * scaleX
         drawOutlinedText(ctx, poemAttribution.value, (attributionRect.left + attributionRect.width / 2 - previewRect.left) * scaleX, (attributionRect.top - previewRect.top) * scaleY, attributionSize, outlined, attributionStrokeWidth)
       }
@@ -459,7 +462,7 @@ onUnmounted(() => {
 .sample-picker small { position: absolute; right: 7px; bottom: 6px; left: 7px; overflow: hidden; color: var(--muted); font: 11px var(--serif); text-align: center; white-space: nowrap; }
 .state-analyzing, .state-understood, .state-editor, .state-generated { display: grid; grid-template-columns: minmax(0, 1.38fr) minmax(360px, .82fr); gap: 48px; align-items: center; }
 .preview-frame { position: relative; border: 1px solid var(--line); padding: 36px 12px 12px; background: rgba(255,252,245,.5); }
-.preview-frame > img, .poster-canvas img { width: 100%; max-height: 560px; object-fit: contain; }
+.preview-frame > img { display: block; width: 100%; max-height: 560px; object-fit: contain; }
 .preview-label { position: absolute; top: 10px; left: 14px; display: flex; align-items: center; gap: 8px; font: 13px var(--serif); }
 .preview-label i { width: 7px; height: 7px; border-radius: 50%; background: var(--cinnabar); }
 .text-action { display: block; margin: 15px auto 0; border: 0; color: var(--muted); background: transparent; cursor: pointer; }
@@ -480,11 +483,14 @@ onUnmounted(() => {
 .analysis-actions { display: flex; align-items: center; gap: 22px; margin-top: 26px; }.analysis-actions .primary-button { min-width: 150px; }
 .understanding-list { display: grid; margin: 28px 0 0; border-top: 1px solid var(--line); }.understanding-list div { display: grid; grid-template-columns: 64px 1fr; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--line); }.understanding-list dt { color: var(--cinnabar); font: 600 15px var(--serif); letter-spacing: .12em; }.understanding-list dd { margin: 0; font: 18px/1.65 var(--serif); }.understanding-panel blockquote { margin: 24px 0 0; padding-left: 18px; border-left: 2px solid var(--cinnabar); font: 22px/1.7 var(--serif); }.confidence { margin: 12px 0 0; color: var(--muted); font-size: 12px; letter-spacing: .08em; }
 .privacy-inline { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
-.poster-canvas { position: relative; overflow: hidden; }
+.poster-canvas { position: relative; width: fit-content; max-width: 100%; margin-inline: auto; overflow: hidden; }
+.poster-canvas img { display: block; width: auto; max-width: 100%; height: auto; max-height: 560px; object-fit: contain; }
 .vertical-poem { position: absolute; top: 13%; right: 8%; display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 10px; font-family: var(--serif); writing-mode: vertical-rl; }
+.poster-canvas.layout-古意竖排 .vertical-poem { right: 16%; }
 .poster-canvas.layout-古意竖排 .vertical-poem small { position: absolute; top: 0; right: -2.2em; margin: 0; font-size: clamp(14px, 1.1vw, 18px); line-height: 1; letter-spacing: .04em; white-space: nowrap; writing-mode: vertical-rl; text-orientation: upright; }
 .poster-canvas.layout-古意竖排 .mini-stamp { position: absolute; top: -4.2em; right: -3.8em; margin: 0; }
 .poster-canvas.font-宋体 .vertical-poem { font-family: SimSun, var(--serif); }
+.poster-canvas.font-楷体 .vertical-poem { font-family: KaiTi, STKaiti, var(--serif); }
 .poster-canvas.font-行楷 .vertical-poem { font-family: STXingkai, KaiTi, var(--serif); }
 .poster-canvas.color-米白 .vertical-poem { color: #fffaf0; }
 .poster-canvas.color-米白 .vertical-poem strong, .poster-canvas.color-米白 .vertical-poem small { text-shadow: 0 1px 3px rgba(0,0,0,.85), 0 0 6px rgba(0,0,0,.5); -webkit-text-stroke: clamp(.45px, .08vw, 1px) rgba(0,0,0,.88); paint-order: stroke fill; }
@@ -499,7 +505,7 @@ onUnmounted(() => {
 .poster-canvas.layout-留白题诗.color-朱砂 .vertical-poem, .poster-canvas.layout-画心题跋.color-朱砂 .vertical-poem { color: var(--cinnabar); }
 .poster-canvas.layout-留白题诗.position-上 .vertical-poem, .poster-canvas.layout-画心题跋.position-上 .vertical-poem { top: 7%; bottom: auto; }
 .poster-canvas.layout-留白题诗.position-中 .vertical-poem, .poster-canvas.layout-画心题跋.position-中 .vertical-poem { top: 40%; bottom: auto; }
-.vertical-poem strong { font-size: clamp(20px, 2.1vw, 34px); line-height: 1.28; letter-spacing: .08em; }
+.vertical-poem strong { display: block; font-size: clamp(20px, 2.1vw, 34px); font-weight: 700; line-height: 1.28; letter-spacing: .08em; }
 .vertical-poem small { margin-top: 20px; font-size: 12px; }
 .mini-stamp { margin-top: 110px; padding: 5px 3px; border: 1px solid var(--cinnabar); border-radius: 3px; color: var(--cinnabar); font-size: 10px; }
 .poem-result { margin: 25px 0 7px; font: 700 33px/1.4 var(--serif); }
