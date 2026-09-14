@@ -39,7 +39,7 @@ jobs:
       - name: 生成静态站点
         run: pnpm generate
         env:
-          NUXT_APP_BASE_URL: /image-to-poetry-website/
+          NUXT_APP_BASE_URL: /
           NUXT_PUBLIC_API_BASE: https://47.117.244.7
 
       - name: 上传 Pages 产物
