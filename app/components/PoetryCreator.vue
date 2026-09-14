@@ -87,7 +87,7 @@
           <img :src="selectedImage" alt="配诗海报预览">
           <div ref="posterOverlay" class="vertical-poem">
             <strong ref="posterStrong"><template v-for="line in posterLines" :key="line">{{ line }}<br></template></strong>
-            <small v-if="showAttribution" ref="posterAttribution">{{ verticalAttribution }}</small>
+            <small v-if="showAttribution" ref="posterAttribution">{{ previewAttribution }}</small>
             <span v-if="showStamp" ref="posterStamp" class="mini-stamp">寻诗</span>
           </div>
         </div>
@@ -123,7 +123,7 @@
           <img :src="posterUrl || selectedImage" alt="生成完成的诗意海报">
           <div v-if="!posterUrl" class="vertical-poem">
             <strong><template v-for="line in posterLines" :key="line">{{ line }}<br></template></strong>
-            <small v-if="showAttribution">{{ verticalAttribution }}</small>
+            <small v-if="showAttribution">{{ previewAttribution }}</small>
             <span v-if="showStamp" class="mini-stamp">寻诗</span>
           </div>
         </div>
@@ -169,7 +169,7 @@ const font = ref('楷体')
 const position = ref('中')
 const textColor = ref('墨黑')
 const showAttribution = ref(true)
-const showStamp = ref(true)
+const showStamp = ref(false)
 const showFullPoem = ref(false)
 const isGenerating = ref(false)
 const posterUrl = ref<string | null>(null)
@@ -205,13 +205,14 @@ const temporalDescription = computed(() => understandingResult.value
   ? [understandingResult.value.season, understandingResult.value.time, understandingResult.value.weather].filter((value, index, values) => value !== '无法确定' && values.indexOf(value) === index).join(' · ') || '无法确定'
   : '')
 const confidencePercent = computed(() => Math.round((understandingResult.value?.confidence || 0) * 100))
-const posterLines = computed(() => {
+const matchedPoemLines = computed(() => {
   const poem = poetryMatch.value?.poem
   if (!poem) return []
   const selected = poem.selectedLineIndexes.map(index => poem.lines[index]).filter((line): line is string => Boolean(line))
   return selected.length ? selected.slice(0, 2) : poem.lines.slice(0, 2)
 })
-const posterText = computed(() => posterLines.value.join(''))
+const posterLines = computed(() => matchedPoemLines.value.map(line => line.replace(/[，。,．]/g, '')))
+const posterText = computed(() => matchedPoemLines.value.join(''))
 const poemAttribution = computed(() => poetryMatch.value
   ? `${poetryMatch.value.poem.dynasty} · ${poetryMatch.value.poem.author}《${poetryMatch.value.poem.title}》`
   : '')
@@ -221,6 +222,9 @@ const compactAttribution = computed(() => poetryMatch.value
 const verticalAttribution = computed(() => compactAttribution.value
   .replace('《', '︽')
   .replace('》', '︾'))
+const previewAttribution = computed(() => position.value === '上' || position.value === '下' || layout.value !== '古意竖排'
+  ? poemAttribution.value
+  : verticalAttribution.value)
 const posterFilename = computed(() => `见景寻诗-${poetryMatch.value?.poem.title || '诗意海报'}.jpg`)
 
 async function beginAnalysis(src: string, source: Blob | string = src) {
@@ -299,7 +303,6 @@ function drawOutlinedText(ctx: CanvasRenderingContext2D, text: string, x: number
   if (outlined) {
     ctx.lineJoin = 'round'
     ctx.miterLimit = 2
-    ctx.strokeStyle = 'rgba(0, 0, 0, .86)'
     ctx.lineWidth = Math.max(1, strokeWidth)
     ctx.strokeText(text, x, y)
   }
@@ -308,6 +311,19 @@ function drawOutlinedText(ctx: CanvasRenderingContext2D, text: string, x: number
 
 function drawVerticalText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, outlined = false) {
   ;[...text].forEach((char, index) => drawOutlinedText(ctx, char, x, y + index * size * 1.08, size, outlined))
+}
+
+function drawHorizontalText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, letterSpacing: number, outlined: boolean, strokeWidth: number) {
+  let cursorX = x
+  ;[...text].forEach((char) => {
+    drawOutlinedText(ctx, char, cursorX, y, size, outlined, strokeWidth)
+    cursorX += ctx.measureText(char).width + letterSpacing
+  })
+}
+
+function measureHorizontalText(ctx: CanvasRenderingContext2D, text: string, letterSpacing: number) {
+  const characters = [...text]
+  return characters.reduce((width, char) => width + ctx.measureText(char).width, 0) + Math.max(0, characters.length - 1) * letterSpacing
 }
 
 function numericStyle(style: CSSStyleDeclaration, property: 'fontSize' | 'lineHeight' | 'letterSpacing', fallback: number) {
@@ -344,17 +360,56 @@ async function renderPosterBlob() {
     const previewStrokeWidth = Number.parseFloat(strongStyle.webkitTextStrokeWidth) || 1
     const size = previewFontSize * scaleX
     const ink = textColor.value === '米白' ? '#fffaf0' : textColor.value === '朱砂' ? '#b54836' : '#171512'
-    const outlined = textColor.value === '米白'
+    const stroke = textColor.value === '米白' ? 'rgba(0, 0, 0, .86)' : textColor.value === '朱砂' ? 'rgba(255, 247, 232, .92)' : 'rgba(255, 250, 240, .9)'
+    const outlined = true
     // Canvas 直接复用预览文字的实际计算字体，避免 DOM 预览与导出图片
     // 分别落到不同的字体回退链，造成字号和字距看起来不一致。
     const fontFamily = strongStyle.fontFamily || 'KaiTi, serif'
     const fontWeight = strongStyle.fontWeight || '700'
     ctx.fillStyle = ink
+    ctx.strokeStyle = stroke
     ctx.textAlign = 'center'
     ctx.textBaseline = 'top'
     ctx.font = `${fontWeight} ${size}px ${fontFamily}`
 
-    if (layout.value === '古意竖排') {
+    if (position.value === '上') {
+      ctx.textAlign = 'left'
+      if (showAttribution.value && posterAttribution.value) {
+        const attributionRect = posterAttribution.value.getBoundingClientRect()
+        const attributionStyle = getComputedStyle(posterAttribution.value)
+        const attributionSize = numericStyle(attributionStyle, 'fontSize', previewFontSize * .43) * scaleX
+        const attributionSpacing = numericStyle(attributionStyle, 'letterSpacing', 0) * scaleX
+        const attributionStrokeWidth = (Number.parseFloat(attributionStyle.webkitTextStrokeWidth) || 1) * scaleX
+        ctx.font = `${attributionStyle.fontWeight || '400'} ${attributionSize}px ${attributionStyle.fontFamily || fontFamily}`
+        const attributionRight = (attributionRect.right - previewRect.left) * scaleX
+        const attributionWidth = measureHorizontalText(ctx, poemAttribution.value, attributionSpacing)
+        drawHorizontalText(ctx, poemAttribution.value, attributionRight - attributionWidth, (attributionRect.top - previewRect.top) * scaleY, attributionSize, attributionSpacing, outlined, attributionStrokeWidth)
+      }
+
+      ctx.font = `${fontWeight} ${size}px ${fontFamily}`
+      const textRight = (strongRect.right - previewRect.left) * scaleX
+      const textY = (strongRect.top - previewRect.top) * scaleY
+      posterLines.value.forEach((line, index) => {
+        const lineWidth = measureHorizontalText(ctx, line, previewLetterSpacing * scaleX)
+        drawHorizontalText(ctx, line, textRight - lineWidth, textY + index * previewLineHeight * scaleY, size, previewLetterSpacing * scaleX, outlined, previewStrokeWidth * scaleX)
+      })
+    } else if (position.value === '下') {
+      ctx.textAlign = 'left'
+      const textX = (strongRect.left - previewRect.left) * scaleX
+      const textY = (strongRect.top - previewRect.top) * scaleY
+      posterLines.value.forEach((line, index) => {
+        drawHorizontalText(ctx, line, textX, textY + index * previewLineHeight * scaleY, size, previewLetterSpacing * scaleX, outlined, previewStrokeWidth * scaleX)
+      })
+      if (showAttribution.value && posterAttribution.value) {
+        const attributionRect = posterAttribution.value.getBoundingClientRect()
+        const attributionStyle = getComputedStyle(posterAttribution.value)
+        const attributionSize = numericStyle(attributionStyle, 'fontSize', previewFontSize * .43) * scaleX
+        const attributionSpacing = numericStyle(attributionStyle, 'letterSpacing', 0) * scaleX
+        const attributionStrokeWidth = (Number.parseFloat(attributionStyle.webkitTextStrokeWidth) || 1) * scaleX
+        ctx.font = `${attributionStyle.fontWeight || '400'} ${attributionSize}px ${attributionStyle.fontFamily || fontFamily}`
+        drawHorizontalText(ctx, poemAttribution.value, (attributionRect.left - previewRect.left) * scaleX, (attributionRect.top - previewRect.top) * scaleY, attributionSize, attributionSpacing, outlined, attributionStrokeWidth)
+      }
+    } else if (layout.value === '古意竖排') {
       const top = (strongRect.top - previewRect.top) * scaleY
       const firstColumnX = (strongRect.right - previewRect.left - previewLineHeight / 2) * scaleX
       const columnStep = previewLineHeight * scaleX
@@ -493,10 +548,13 @@ onUnmounted(() => {
 .poster-canvas.font-楷体 .vertical-poem { font-family: KaiTi, STKaiti, var(--serif); }
 .poster-canvas.font-行楷 .vertical-poem { font-family: STXingkai, KaiTi, var(--serif); }
 .poster-canvas.color-米白 .vertical-poem { color: #fffaf0; }
-.poster-canvas.color-米白 .vertical-poem strong, .poster-canvas.color-米白 .vertical-poem small { text-shadow: 0 1px 3px rgba(0,0,0,.85), 0 0 6px rgba(0,0,0,.5); -webkit-text-stroke: clamp(.45px, .08vw, 1px) rgba(0,0,0,.88); paint-order: stroke fill; }
+.poster-canvas.color-米白 .vertical-poem strong, .poster-canvas.color-米白 .vertical-poem small { text-shadow: 0 1px 3px rgba(0,0,0,.85), 0 0 6px rgba(0,0,0,.5); -webkit-text-stroke-color: rgba(0,0,0,.88); }
+.poster-canvas.color-墨黑 .vertical-poem strong, .poster-canvas.color-墨黑 .vertical-poem small { text-shadow: 0 1px 3px rgba(0,0,0,.22); -webkit-text-stroke-color: rgba(255,250,240,.9); }
+.poster-canvas.color-朱砂 .vertical-poem strong, .poster-canvas.color-朱砂 .vertical-poem small { text-shadow: 0 1px 3px rgba(0,0,0,.24); -webkit-text-stroke-color: rgba(255,247,232,.92); }
+.poster-canvas .vertical-poem strong { -webkit-text-stroke-width: clamp(.45px, .08vw, 1px); paint-order: stroke fill; }
+.poster-canvas .vertical-poem small { -webkit-text-stroke-width: clamp(.3px, .055vw, .7px); paint-order: stroke fill; }
 .poster-canvas.color-朱砂 .vertical-poem { color: var(--cinnabar); }
 .poster-canvas.position-上 .vertical-poem { top: 5%; }
-.poster-canvas.position-下 .vertical-poem { top: 42%; }
 .poster-canvas.layout-留白题诗 .vertical-poem, .poster-canvas.layout-画心题跋 .vertical-poem { top: auto; right: 7%; bottom: 8%; left: 7%; display: grid; justify-items: center; gap: 5px; padding: 18px; text-align: center; writing-mode: horizontal-tb; }
 .poster-canvas.layout-留白题诗 .vertical-poem { color: #fffaf0; background: rgba(17,15,12,.38); text-shadow: 0 1px 5px rgba(0,0,0,.45); }
 .poster-canvas.layout-画心题跋 .vertical-poem { color: var(--ink); background: rgba(244,240,231,.88); }
@@ -505,6 +563,14 @@ onUnmounted(() => {
 .poster-canvas.layout-留白题诗.color-朱砂 .vertical-poem, .poster-canvas.layout-画心题跋.color-朱砂 .vertical-poem { color: var(--cinnabar); }
 .poster-canvas.layout-留白题诗.position-上 .vertical-poem, .poster-canvas.layout-画心题跋.position-上 .vertical-poem { top: 7%; bottom: auto; }
 .poster-canvas.layout-留白题诗.position-中 .vertical-poem, .poster-canvas.layout-画心题跋.position-中 .vertical-poem { top: 40%; bottom: auto; }
+.poster-canvas.position-下 .vertical-poem { top: auto; right: auto; bottom: 6%; left: 6%; display: grid; justify-items: start; gap: 9px; padding: 0; background: transparent; text-align: left; writing-mode: horizontal-tb; }
+.poster-canvas.position-下 .vertical-poem strong { font-size: clamp(20px, 2.1vw, 34px); line-height: 1.5; letter-spacing: .05em; }
+.poster-canvas.position-下 .vertical-poem small, .poster-canvas.layout-古意竖排.position-下 .vertical-poem small { position: static; margin: 0; font-size: clamp(10px, .85vw, 13px); line-height: 1.2; letter-spacing: .02em; white-space: nowrap; writing-mode: horizontal-tb; text-orientation: mixed; }
+.poster-canvas.position-下 .mini-stamp, .poster-canvas.layout-古意竖排.position-下 .mini-stamp { position: absolute; top: auto; right: -3.2em; bottom: 0; margin: 0; }
+.poster-canvas.position-上 .vertical-poem { top: 6%; right: 6%; bottom: auto; left: auto; display: grid; justify-items: end; gap: 7px; padding: 0; background: transparent; text-align: right; writing-mode: horizontal-tb; }
+.poster-canvas.position-上 .vertical-poem strong { line-height: 1.42; letter-spacing: .05em; }
+.poster-canvas.position-上 .vertical-poem small, .poster-canvas.layout-古意竖排.position-上 .vertical-poem small { position: static; order: -1; margin: 0; font-size: clamp(13px, 1.15vw, 18px); line-height: 1.25; letter-spacing: .03em; white-space: nowrap; writing-mode: horizontal-tb; text-orientation: mixed; }
+.poster-canvas.position-上 .mini-stamp, .poster-canvas.layout-古意竖排.position-上 .mini-stamp { position: absolute; top: 0; right: calc(100% + 10px); margin: 0; }
 .vertical-poem strong { display: block; font-size: clamp(20px, 2.1vw, 34px); font-weight: 700; line-height: 1.28; letter-spacing: .08em; }
 .vertical-poem small { margin-top: 20px; font-size: 12px; }
 .mini-stamp { margin-top: 110px; padding: 5px 3px; border: 1px solid var(--cinnabar); border-radius: 3px; color: var(--cinnabar); font-size: 10px; }
@@ -545,7 +611,7 @@ onUnmounted(() => {
   .upload-board h2 { font-size: 24px; }.upload-button { width: 280px; min-width: 0; }
   .state-idle { gap: 18px; }.sample-picker button { min-height: 78px; }
   .preview-frame { padding-top: 34px; }.poster-preview { padding-inline: 6px; }
-  .vertical-poem { top: 8%; right: 4%; gap: 3px; }.vertical-poem strong { font-size: 13px; line-height: 1.22; }.poster-canvas.layout-古意竖排 .vertical-poem small { right: -2.15em; font-size: 11px; }.vertical-poem small { margin-top: 8px; }.mini-stamp { margin-top: 42px; font-size: 8px; }
+  .vertical-poem { top: 8%; right: 4%; gap: 3px; }.vertical-poem strong { font-size: 13px; line-height: 1.22; }.poster-canvas.layout-古意竖排 .vertical-poem small { right: -2.15em; font-size: 11px; }.vertical-poem small { margin-top: 8px; }.mini-stamp { margin-top: 42px; font-size: 8px; }.poster-canvas.position-上 .vertical-poem { top: 5%; right: 5%; gap: 4px; }.poster-canvas.position-上 .vertical-poem small, .poster-canvas.layout-古意竖排.position-上 .vertical-poem small { font-size: 11px; }
   .poem-result { font-size: 27px; }.match-reason { font-size: 14px; }.switch-row { align-items: flex-start; flex-direction: column; }
 }
 </style>

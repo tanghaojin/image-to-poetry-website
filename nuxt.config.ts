@@ -1,6 +1,10 @@
 import tailwindcss from '@tailwindcss/vite'
 
 const baseURL = process.env.NUXT_APP_BASE_URL || '/'
+const siteURL = 'https://imagetopoetry.com'
+const siteTitle = '见景寻诗｜上传照片智能匹配真实古典诗词并生成高清诗意海报的免费在线图片配诗创作工具'
+const siteDescription = '上传一张照片，找到最贴近画面意境的真实古典诗词，并生成保持原图比例的高清诗意海报。'
+const isProduction = process.env.NODE_ENV === 'production'
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-09-11',
@@ -14,7 +18,19 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'github-pages'
   },
-  modules: ['@nuxt/icon'],
+  modules: [
+    '@nuxt/icon',
+    '@nuxtjs/robots',
+    '@nuxtjs/sitemap'
+  ],
+  site: {
+    url: siteURL,
+    name: '见景寻诗',
+    description: siteDescription,
+    defaultLocale: 'zh-CN',
+    indexable: isProduction
+  },
+  sitemap: {},
   css: ['~/assets/css/main.css'],
   vite: {
     plugins: [tailwindcss()]
@@ -23,12 +39,16 @@ export default defineNuxtConfig({
     baseURL,
     head: {
       htmlAttrs: { lang: 'zh-CN' },
-      title: '见景寻诗 - 免费图片配诗工具',
-      link: [{ rel: 'icon', type: 'image/svg+xml', href: `${baseURL}favicon.svg` }],
+      title: siteTitle,
+      titleTemplate: '%s',
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: `${baseURL}favicon.ico` },
+        { rel: 'icon', type: 'image/png', sizes: '512x512', href: `${baseURL}favicon-poem.png` }
+      ],
       meta: [
         {
           name: 'description',
-          content: '上传一张照片，找到最贴近画面意境的真实古典诗词，并生成保持原图比例的诗意海报。'
+          content: siteDescription
         },
         { name: 'theme-color', content: '#f4f0e7' }
       ]

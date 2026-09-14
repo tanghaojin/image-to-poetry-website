@@ -1,7 +1,7 @@
 <template>
   <section id="top" class="hero-section ink-landscape" :class="{ 'creator-active': creatorActive }">
-    <img v-show="!creatorActive" class="hero-ink hero-ink-left" :src="assetPath('images/hero/ink-landscape-left.png')" alt="" aria-hidden="true">
-    <img v-show="!creatorActive" class="hero-ink hero-ink-right" :src="assetPath('images/hero/ink-mountains-right.png')" alt="" aria-hidden="true">
+    <span v-show="!creatorActive" class="hero-ink hero-ink-left" :style="{ backgroundImage: `url(${assetPath('images/hero/ink-landscape-left.png')})` }" aria-hidden="true" />
+    <span v-show="!creatorActive" class="hero-ink hero-ink-right" :style="{ backgroundImage: `url(${assetPath('images/hero/ink-mountains-right.png')})` }" aria-hidden="true" />
 
     <div class="container-wide hero-stage">
       <div v-show="!creatorActive" class="hero-copy">
@@ -10,7 +10,7 @@
         <p class="hero-subtitle">上传一张照片，找到最贴近画面意境的真实古典诗词。</p>
         <p class="hero-trust">真实诗词出处 <i /> 免费使用 <i /> 无需登录</p>
         <div class="side-note" aria-hidden="true">
-          <img :src="assetPath('images/hero/seal-brand.png')" alt="">
+          <img :src="assetPath('images/hero/seal-brand.png')" alt="见景寻诗篆刻印章">
           <span>山河入镜<br>诗意自来</span>
         </div>
       </div>
@@ -39,9 +39,9 @@ const creatorActive = ref(false)
 .side-note { display: flex; align-items: center; gap: 20px; margin-top: 46px; color: var(--muted); font: 14px/1.9 var(--serif); letter-spacing: .15em; }
 .side-note::before { width: 2px; height: 66px; content: ""; background: var(--cinnabar); }
 .side-note img { width: 52px; height: 52px; object-fit: contain; }
-.hero-ink { position: absolute; z-index: 0; pointer-events: none; user-select: none; }
-.hero-ink-left { bottom: -78px; left: 0; width: min(68vw, 1250px); opacity: .5; }
-.hero-ink-right { top: 34px; right: -4%; width: min(50vw, 900px); opacity: .38; }
+.hero-ink { position: absolute; z-index: 0; display: block; background-position: center; background-repeat: no-repeat; background-size: contain; pointer-events: none; user-select: none; }
+.hero-ink-left { bottom: -78px; left: 0; width: min(68vw, 1250px); aspect-ratio: 8 / 3; opacity: .5; }
+.hero-ink-right { top: 34px; right: -4%; width: min(50vw, 900px); aspect-ratio: 1600 / 533; opacity: .38; }
 .hero-section.creator-active { min-height: calc(100dvh - 68px); padding-top: 44px; }
 .hero-section.creator-active .hero-stage { display: block; }
 @media (max-width: 767px) {

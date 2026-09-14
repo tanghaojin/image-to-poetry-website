@@ -5,5 +5,6 @@
     <main id="main-content">
       <slot />
     </main>
+    <SiteFooter />
   </div>
 </template>

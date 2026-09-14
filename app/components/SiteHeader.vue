@@ -1,16 +1,16 @@
 <template>
   <header class="site-header">
     <div class="container-wide nav-inner">
-      <a href="#top" class="brand" aria-label="见景寻诗首页">
+      <NuxtLink to="/" class="brand" aria-label="见景寻诗首页">
         <span>见景寻诗</span>
         <img class="brand-stamp" :src="assetPath('images/hero/seal-poetry-mood.png')" alt="诗境">
-      </a>
+      </NuxtLink>
 
       <nav class="desktop-nav" aria-label="主导航">
-        <a href="#examples">示例作品</a>
-        <a href="#how-it-works">如何使用</a>
-        <a href="#about">关于寻诗</a>
-        <a href="#faq">常见问题</a>
+        <NuxtLink to="/#examples">示例作品</NuxtLink>
+        <NuxtLink to="/#how-it-works">如何使用</NuxtLink>
+        <NuxtLink to="/#about">关于寻诗</NuxtLink>
+        <NuxtLink to="/#faq">常见问题</NuxtLink>
       </nav>
 
       <button
@@ -27,10 +27,10 @@
 
     <Transition name="menu-fade">
       <nav v-if="menuOpen" id="mobile-menu" class="mobile-nav" aria-label="移动端导航">
-        <a href="#examples" @click="menuOpen = false">示例作品</a>
-        <a href="#how-it-works" @click="menuOpen = false">如何使用</a>
-        <a href="#about" @click="menuOpen = false">关于寻诗</a>
-        <a href="#faq" @click="menuOpen = false">常见问题</a>
+        <NuxtLink to="/#examples" @click="menuOpen = false">示例作品</NuxtLink>
+        <NuxtLink to="/#how-it-works" @click="menuOpen = false">如何使用</NuxtLink>
+        <NuxtLink to="/#about" @click="menuOpen = false">关于寻诗</NuxtLink>
+        <NuxtLink to="/#faq" @click="menuOpen = false">常见问题</NuxtLink>
       </nav>
     </Transition>
   </header>
