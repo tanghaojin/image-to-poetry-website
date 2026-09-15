@@ -316,24 +316,35 @@ function loadPosterImage() {
   })
 }
 
-function drawOutlinedText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, outlined: boolean, strokeWidth = size * .095) {
-  if (outlined) {
-    ctx.lineJoin = 'round'
-    ctx.miterLimit = 2
-    ctx.lineWidth = Math.max(1, strokeWidth)
-    ctx.strokeText(text, x, y)
-  }
+type TextGlow = { near: string, far: string }
+
+function drawGlowText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, glow: TextGlow) {
+  const ink = ctx.fillStyle
+
+  ctx.save()
+  ctx.shadowColor = glow.far
+  ctx.shadowBlur = Math.max(1, size * .48)
+  ctx.shadowOffsetX = 0
+  ctx.shadowOffsetY = 0
+  ctx.fillText(text, x, y)
+
+  ctx.shadowColor = glow.near
+  ctx.shadowBlur = Math.max(1, size * .18)
+  ctx.fillText(text, x, y)
+  ctx.restore()
+
+  ctx.fillStyle = ink
   ctx.fillText(text, x, y)
 }
 
-function drawVerticalText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, outlined = false) {
-  ;[...text].forEach((char, index) => drawOutlinedText(ctx, char, x, y + index * size * 1.08, size, outlined))
+function drawVerticalText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number) {
+  ;[...text].forEach((char, index) => ctx.fillText(char, x, y + index * size * 1.08))
 }
 
-function drawHorizontalText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, letterSpacing: number, outlined: boolean, strokeWidth: number) {
+function drawHorizontalText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, letterSpacing: number, glow: TextGlow) {
   let cursorX = x
   ;[...text].forEach((char) => {
-    drawOutlinedText(ctx, char, cursorX, y, size, outlined, strokeWidth)
+    drawGlowText(ctx, char, cursorX, y, size, glow)
     cursorX += ctx.measureText(char).width + letterSpacing
   })
 }
@@ -374,17 +385,17 @@ async function renderPosterBlob() {
     const previewFontSize = numericStyle(strongStyle, 'fontSize', 34)
     const previewLineHeight = numericStyle(strongStyle, 'lineHeight', previewFontSize * 1.28)
     const previewLetterSpacing = numericStyle(strongStyle, 'letterSpacing', previewFontSize * .08)
-    const previewStrokeWidth = Number.parseFloat(strongStyle.webkitTextStrokeWidth) || 1
     const size = previewFontSize * scaleX
-    const ink = textColor.value === '米白' ? '#fffaf0' : textColor.value === '朱砂' ? '#b54836' : '#171512'
-    const stroke = textColor.value === '米白' ? 'rgba(0, 0, 0, .86)' : textColor.value === '朱砂' ? 'rgba(255, 247, 232, .92)' : 'rgba(255, 250, 240, .9)'
-    const outlined = true
+    const ink = strongStyle.color || '#171512'
+    const glow = {
+      near: strongStyle.getPropertyValue('--poster-glow-near').trim() || 'rgba(255, 250, 240, .72)',
+      far: strongStyle.getPropertyValue('--poster-glow-far').trim() || 'rgba(255, 250, 240, .32)'
+    }
     // Canvas 直接复用预览文字的实际计算字体，避免 DOM 预览与导出图片
     // 分别落到不同的字体回退链，造成字号和字距看起来不一致。
     const fontFamily = strongStyle.fontFamily || 'KaiTi, serif'
     const fontWeight = strongStyle.fontWeight || '700'
     ctx.fillStyle = ink
-    ctx.strokeStyle = stroke
     ctx.textAlign = 'center'
     ctx.textBaseline = 'top'
     ctx.font = `${fontWeight} ${size}px ${fontFamily}`
@@ -396,11 +407,10 @@ async function renderPosterBlob() {
         const attributionStyle = getComputedStyle(posterAttribution.value)
         const attributionSize = numericStyle(attributionStyle, 'fontSize', previewFontSize * .43) * scaleX
         const attributionSpacing = numericStyle(attributionStyle, 'letterSpacing', 0) * scaleX
-        const attributionStrokeWidth = (Number.parseFloat(attributionStyle.webkitTextStrokeWidth) || 1) * scaleX
         ctx.font = `${attributionStyle.fontWeight || '400'} ${attributionSize}px ${attributionStyle.fontFamily || fontFamily}`
         const attributionRight = (attributionRect.right - previewRect.left) * scaleX
         const attributionWidth = measureHorizontalText(ctx, poemAttribution.value, attributionSpacing)
-        drawHorizontalText(ctx, poemAttribution.value, attributionRight - attributionWidth, (attributionRect.top - previewRect.top) * scaleY, attributionSize, attributionSpacing, outlined, attributionStrokeWidth)
+        drawHorizontalText(ctx, poemAttribution.value, attributionRight - attributionWidth, (attributionRect.top - previewRect.top) * scaleY, attributionSize, attributionSpacing, glow)
       }
 
       ctx.font = `${fontWeight} ${size}px ${fontFamily}`
@@ -408,23 +418,22 @@ async function renderPosterBlob() {
       const textY = (strongRect.top - previewRect.top) * scaleY
       posterLines.value.forEach((line, index) => {
         const lineWidth = measureHorizontalText(ctx, line, previewLetterSpacing * scaleX)
-        drawHorizontalText(ctx, line, textRight - lineWidth, textY + index * previewLineHeight * scaleY, size, previewLetterSpacing * scaleX, outlined, previewStrokeWidth * scaleX)
+        drawHorizontalText(ctx, line, textRight - lineWidth, textY + index * previewLineHeight * scaleY, size, previewLetterSpacing * scaleX, glow)
       })
     } else if (position.value === '下') {
       ctx.textAlign = 'left'
       const textX = (strongRect.left - previewRect.left) * scaleX
       const textY = (strongRect.top - previewRect.top) * scaleY
       posterLines.value.forEach((line, index) => {
-        drawHorizontalText(ctx, line, textX, textY + index * previewLineHeight * scaleY, size, previewLetterSpacing * scaleX, outlined, previewStrokeWidth * scaleX)
+        drawHorizontalText(ctx, line, textX, textY + index * previewLineHeight * scaleY, size, previewLetterSpacing * scaleX, glow)
       })
       if (showAttribution.value && posterAttribution.value) {
         const attributionRect = posterAttribution.value.getBoundingClientRect()
         const attributionStyle = getComputedStyle(posterAttribution.value)
         const attributionSize = numericStyle(attributionStyle, 'fontSize', previewFontSize * .43) * scaleX
         const attributionSpacing = numericStyle(attributionStyle, 'letterSpacing', 0) * scaleX
-        const attributionStrokeWidth = (Number.parseFloat(attributionStyle.webkitTextStrokeWidth) || 1) * scaleX
         ctx.font = `${attributionStyle.fontWeight || '400'} ${attributionSize}px ${attributionStyle.fontFamily || fontFamily}`
-        drawHorizontalText(ctx, poemAttribution.value, (attributionRect.left - previewRect.left) * scaleX, (attributionRect.top - previewRect.top) * scaleY, attributionSize, attributionSpacing, outlined, attributionStrokeWidth)
+        drawHorizontalText(ctx, poemAttribution.value, (attributionRect.left - previewRect.left) * scaleX, (attributionRect.top - previewRect.top) * scaleY, attributionSize, attributionSpacing, glow)
       }
     } else if (layout.value === '古意竖排') {
       const top = (strongRect.top - previewRect.top) * scaleY
@@ -432,7 +441,7 @@ async function renderPosterBlob() {
       const columnStep = previewLineHeight * scaleX
       const characterStep = (previewFontSize + previewLetterSpacing) * scaleY
       posterLines.value.forEach((line, index) => {
-        ;[...line].forEach((char, charIndex) => drawOutlinedText(ctx, char, firstColumnX - index * columnStep, top + charIndex * characterStep, size, outlined, previewStrokeWidth * scaleX))
+        ;[...line].forEach((char, charIndex) => drawGlowText(ctx, char, firstColumnX - index * columnStep, top + charIndex * characterStep, size, glow))
       })
       if (showAttribution.value && posterAttribution.value) {
         const attributionRect = posterAttribution.value.getBoundingClientRect()
@@ -442,8 +451,7 @@ async function renderPosterBlob() {
         const attributionX = (attributionRect.left + attributionRect.width / 2 - previewRect.left) * scaleX
         const attributionY = (attributionRect.top - previewRect.top) * scaleY
         const attributionSpacing = numericStyle(attributionStyle, 'letterSpacing', attributionSize * .04 / scaleX) * scaleY
-        const attributionStrokeWidth = (Number.parseFloat(attributionStyle.webkitTextStrokeWidth) || 1) * scaleX
-        ;[...verticalAttribution.value].forEach((char, index) => drawOutlinedText(ctx, char, attributionX, attributionY + index * (attributionSize + attributionSpacing), attributionSize, outlined, attributionStrokeWidth))
+        ;[...verticalAttribution.value].forEach((char, index) => drawGlowText(ctx, char, attributionX, attributionY + index * (attributionSize + attributionSpacing), attributionSize, glow))
       }
     } else {
       const bandX = (overlayRect.left - previewRect.left) * scaleX
@@ -456,14 +464,13 @@ async function renderPosterBlob() {
       ctx.font = `${fontWeight} ${size}px ${fontFamily}`
       const textX = (strongRect.left + strongRect.width / 2 - previewRect.left) * scaleX
       const textY = (strongRect.top - previewRect.top) * scaleY
-      posterLines.value.forEach((line, index) => drawOutlinedText(ctx, line, textX, textY + index * previewLineHeight * scaleY, size, outlined, previewStrokeWidth * scaleX))
+      posterLines.value.forEach((line, index) => drawGlowText(ctx, line, textX, textY + index * previewLineHeight * scaleY, size, glow))
       if (showAttribution.value && posterAttribution.value) {
         const attributionRect = posterAttribution.value.getBoundingClientRect()
         const attributionStyle = getComputedStyle(posterAttribution.value)
         const attributionSize = numericStyle(attributionStyle, 'fontSize', previewFontSize * .43) * scaleX
         ctx.font = `${attributionStyle.fontWeight || '400'} ${attributionSize}px ${attributionStyle.fontFamily || fontFamily}`
-        const attributionStrokeWidth = (Number.parseFloat(attributionStyle.webkitTextStrokeWidth) || 1) * scaleX
-        drawOutlinedText(ctx, poemAttribution.value, (attributionRect.left + attributionRect.width / 2 - previewRect.left) * scaleX, (attributionRect.top - previewRect.top) * scaleY, attributionSize, outlined, attributionStrokeWidth)
+        drawGlowText(ctx, poemAttribution.value, (attributionRect.left + attributionRect.width / 2 - previewRect.left) * scaleX, (attributionRect.top - previewRect.top) * scaleY, attributionSize, glow)
       }
     }
 
@@ -557,27 +564,21 @@ onUnmounted(() => {
 .privacy-inline { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
 .poster-canvas { position: relative; width: fit-content; max-width: 100%; margin-inline: auto; overflow: hidden; }
 .poster-canvas img { display: block; width: auto; max-width: 100%; height: auto; max-height: 560px; object-fit: contain; }
-.vertical-poem { position: absolute; top: 13%; right: 8%; display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 10px; font-family: var(--serif); writing-mode: vertical-rl; }
+.vertical-poem { position: absolute; top: 13%; right: 8%; display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 10px; color: var(--poster-ink); font-family: var(--serif); writing-mode: vertical-rl; }
 .poster-canvas.layout-古意竖排 .vertical-poem { right: 16%; }
 .poster-canvas.layout-古意竖排 .vertical-poem small { position: absolute; top: 0; right: -2.2em; margin: 0; font-size: clamp(14px, 1.1vw, 18px); line-height: 1; letter-spacing: .04em; white-space: nowrap; writing-mode: vertical-rl; text-orientation: upright; }
 .poster-canvas.layout-古意竖排 .mini-stamp { position: absolute; top: -4.2em; right: -3.8em; margin: 0; }
 .poster-canvas.font-宋体 .vertical-poem { font-family: SimSun, var(--serif); }
 .poster-canvas.font-楷体 .vertical-poem { font-family: KaiTi, STKaiti, var(--serif); }
 .poster-canvas.font-行楷 .vertical-poem { font-family: STXingkai, KaiTi, var(--serif); }
-.poster-canvas.color-米白 .vertical-poem { color: #fffaf0; }
-.poster-canvas.color-米白 .vertical-poem strong, .poster-canvas.color-米白 .vertical-poem small { text-shadow: 0 1px 3px rgba(0,0,0,.85), 0 0 6px rgba(0,0,0,.5); -webkit-text-stroke-color: rgba(0,0,0,.88); }
-.poster-canvas.color-墨黑 .vertical-poem strong, .poster-canvas.color-墨黑 .vertical-poem small { text-shadow: 0 1px 3px rgba(0,0,0,.22); -webkit-text-stroke-color: rgba(255,250,240,.9); }
-.poster-canvas.color-朱砂 .vertical-poem strong, .poster-canvas.color-朱砂 .vertical-poem small { text-shadow: 0 1px 3px rgba(0,0,0,.24); -webkit-text-stroke-color: rgba(255,247,232,.92); }
-.poster-canvas .vertical-poem strong { -webkit-text-stroke-width: clamp(.45px, .08vw, 1px); paint-order: stroke fill; }
-.poster-canvas .vertical-poem small { -webkit-text-stroke-width: clamp(.3px, .055vw, .7px); paint-order: stroke fill; }
-.poster-canvas.color-朱砂 .vertical-poem { color: var(--cinnabar); }
+.poster-canvas.color-墨黑 { --poster-ink: #171512; --poster-glow-near: rgba(255,250,240,.72); --poster-glow-far: rgba(255,250,240,.32); }
+.poster-canvas.color-米白 { --poster-ink: #fffaf0; --poster-glow-near: rgba(23,21,18,.62); --poster-glow-far: rgba(23,21,18,.28); }
+.poster-canvas.color-朱砂 { --poster-ink: #b54836; --poster-glow-near: rgba(255,247,232,.68); --poster-glow-far: rgba(255,247,232,.3); }
+.poster-canvas .vertical-poem strong, .poster-canvas .vertical-poem small { text-shadow: 0 0 .18em var(--poster-glow-near), 0 0 .48em var(--poster-glow-far); }
 .poster-canvas.position-上 .vertical-poem { top: 5%; }
 .poster-canvas.layout-留白题诗 .vertical-poem, .poster-canvas.layout-画心题跋 .vertical-poem { top: auto; right: 7%; bottom: 8%; left: 7%; display: grid; justify-items: center; gap: 5px; padding: 18px; text-align: center; writing-mode: horizontal-tb; }
-.poster-canvas.layout-留白题诗 .vertical-poem { color: #fffaf0; background: rgba(17,15,12,.38); text-shadow: 0 1px 5px rgba(0,0,0,.45); }
-.poster-canvas.layout-画心题跋 .vertical-poem { color: var(--ink); background: rgba(244,240,231,.88); }
-.poster-canvas.layout-留白题诗.color-墨黑 .vertical-poem, .poster-canvas.layout-画心题跋.color-墨黑 .vertical-poem { color: var(--ink); }
-.poster-canvas.layout-留白题诗.color-米白 .vertical-poem, .poster-canvas.layout-画心题跋.color-米白 .vertical-poem { color: #fffaf0; }
-.poster-canvas.layout-留白题诗.color-朱砂 .vertical-poem, .poster-canvas.layout-画心题跋.color-朱砂 .vertical-poem { color: var(--cinnabar); }
+.poster-canvas.layout-留白题诗 .vertical-poem { background: rgba(17,15,12,.38); }
+.poster-canvas.layout-画心题跋 .vertical-poem { background: rgba(244,240,231,.88); }
 .poster-canvas.layout-留白题诗.position-上 .vertical-poem, .poster-canvas.layout-画心题跋.position-上 .vertical-poem { top: 7%; bottom: auto; }
 .poster-canvas.layout-留白题诗.position-中 .vertical-poem, .poster-canvas.layout-画心题跋.position-中 .vertical-poem { top: 40%; bottom: auto; }
 .poster-canvas.position-下 .vertical-poem { top: auto; right: auto; bottom: 6%; left: 6%; display: grid; justify-items: start; gap: 9px; padding: 0; background: transparent; text-align: left; writing-mode: horizontal-tb; }
