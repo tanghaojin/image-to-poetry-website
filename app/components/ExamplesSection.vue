@@ -1,53 +1,54 @@
 <template>
   <section id="examples" class="examples-section">
     <div class="container-wide">
-      <span class="section-kicker">作品选</span>
+      <span class="section-kicker">{{ t('home.examples.kicker') }}</span>
       <div class="section-heading">
         <div>
-          <h2 class="display-title">同一片风景，古人早已写过</h2>
-          <p>从山川草木到人间烟火，每一幅画面，都可能与一首古诗遥相呼应。</p>
+          <h2 class="display-title">{{ t('home.examples.title') }}</h2>
+          <p>{{ t('home.examples.text') }}</p>
         </div>
-        <small>点击作品下方按钮，可查看配诗前的原图。</small>
+        <small>{{ t('home.examples.hint') }}</small>
       </div>
 
       <div class="gallery">
         <article class="work work-main">
           <span class="work-number">01</span>
           <div class="work-image sunset" :class="{ original: activeOriginal === 0 }">
-            <img :src="assetPath('images/examples/sunset-river.jpg')" alt="暮江落日">
+            <img :src="assetPath('images/examples/sunset-river.jpg')" :alt="t('home.examples.sunsetAlt')">
             <div class="horizontal-verse">
               <strong>一道残阳铺水中，<br>半江瑟瑟半江红。</strong>
               <span>唐 · 白居易《暮江吟》</span>
             </div>
           </div>
-          <button type="button" :aria-pressed="activeOriginal === 0" @click="toggleOriginal(0)"><Icon :name="activeOriginal === 0 ? 'heroicons:sparkles' : 'heroicons:magnifying-glass'" /> {{ activeOriginal === 0 ? '查看配诗' : '查看原图' }}</button>
+          <button type="button" :aria-pressed="activeOriginal === 0" @click="toggleOriginal(0)"><Icon :name="activeOriginal === 0 ? 'heroicons:sparkles' : 'heroicons:magnifying-glass'" /> {{ activeOriginal === 0 ? t('home.examples.viewPoem') : t('home.examples.viewOriginal') }}</button>
         </article>
 
         <article class="work work-winter">
           <span class="work-number">02</span>
           <div class="work-image" :class="{ original: activeOriginal === 1 }">
-            <img :src="assetPath('images/examples/winter-boat.jpg')" alt="寒江孤舟">
+            <img :src="assetPath('images/examples/winter-boat.jpg')" :alt="t('home.examples.winterAlt')">
             <div class="vertical-verse"><strong>孤舟蓑笠翁，<br>独钓寒江雪。</strong><span>唐 · 柳宗元《江雪》</span></div>
           </div>
-          <button type="button" :aria-pressed="activeOriginal === 1" @click="toggleOriginal(1)"><Icon :name="activeOriginal === 1 ? 'heroicons:sparkles' : 'heroicons:magnifying-glass'" /> {{ activeOriginal === 1 ? '查看配诗' : '查看原图' }}</button>
+          <button type="button" :aria-pressed="activeOriginal === 1" @click="toggleOriginal(1)"><Icon :name="activeOriginal === 1 ? 'heroicons:sparkles' : 'heroicons:magnifying-glass'" /> {{ activeOriginal === 1 ? t('home.examples.viewPoem') : t('home.examples.viewOriginal') }}</button>
         </article>
 
         <article class="work work-peach">
           <span class="work-number">03</span>
           <div class="work-image peach-frame" :class="{ original: activeOriginal === 2 }">
-            <img :src="assetPath('images/examples/mountain-peach-blossom.jpg')" alt="山中桃花">
+            <img :src="assetPath('images/examples/mountain-peach-blossom.jpg')" :alt="t('home.examples.peachAlt')">
             <div class="peach-verse"><strong>人间四月芳菲尽，<br>山寺桃花始盛开。</strong><span>唐 · 白居易《大林寺桃花》</span></div>
           </div>
-          <button type="button" :aria-pressed="activeOriginal === 2" @click="toggleOriginal(2)"><Icon :name="activeOriginal === 2 ? 'heroicons:sparkles' : 'heroicons:magnifying-glass'" /> {{ activeOriginal === 2 ? '查看配诗' : '查看原图' }}</button>
+          <button type="button" :aria-pressed="activeOriginal === 2" @click="toggleOriginal(2)"><Icon :name="activeOriginal === 2 ? 'heroicons:sparkles' : 'heroicons:magnifying-glass'" /> {{ activeOriginal === 2 ? t('home.examples.viewPoem') : t('home.examples.viewOriginal') }}</button>
         </article>
       </div>
-      <a class="example-cta" href="#top">用示例图片体验一次 <span>→</span></a>
+      <a class="example-cta" href="#top">{{ t('home.examples.cta') }} <span>→</span></a>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
 const assetPath = usePublicAsset()
+const { t } = useI18n()
 const activeOriginal = ref<number | null>(null)
 
 function toggleOriginal(index: number) {

@@ -1,31 +1,35 @@
 <template>
   <section id="about" class="trust-section">
     <div class="container-wide">
-      <span class="section-kicker">所寻有据</span>
-      <h2 class="display-title">只寻古人真句，不作凭空新作</h2>
-      <p class="lead">见景寻诗只从有明确作者和出处的古典诗词中寻找答案。系统负责理解图片与匹配意境，不仿写古诗，也不把机器创作的内容冒充古人作品。</p>
+      <span class="section-kicker">{{ t('home.trust.kicker') }}</span>
+      <h2 class="display-title">{{ t('home.trust.title') }}</h2>
+      <p class="lead">{{ t('home.trust.lead') }}</p>
 
       <div class="trust-grid">
         <article class="archive-sheet">
-          <span class="archive-stamp">已核</span>
+          <span class="archive-stamp">{{ t('home.trust.verified') }}</span>
           <div class="poem-archive">
             <h3>宿建德江</h3>
             <p>移舟泊烟渚，日暮客愁新。<br>野旷天低树，江清月近人。</p>
             <span>唐 · 孟浩然</span>
           </div>
-          <ul><li><b>原文可核</b><span>经权威古籍版本校对</span></li><li><b>作者明确</b><span>标明作者、朝代和篇名</span></li><li><b>出处可追溯</b><span>来源经典诗词文献</span></li></ul>
+          <ul><li><b>{{ t('home.trust.proof1Title') }}</b><span>{{ t('home.trust.proof1Text') }}</span></li><li><b>{{ t('home.trust.proof2Title') }}</b><span>{{ t('home.trust.proof2Text') }}</span></li><li><b>{{ t('home.trust.proof3Title') }}</b><span>{{ t('home.trust.proof3Text') }}</span></li></ul>
         </article>
 
         <article class="privacy-proof">
-          <h3>照片属于你，<br>也只服务于这一次寻诗</h3>
-          <p>图片仅用于分析画面意境，本站不保存。</p>
-          <div class="privacy-flow"><span>选择图片</span><i>→</i><span>浏览器处理</span><i>→</i><span>意境分析</span><i>→</i><span class="deleted">本站不保存</span></div>
-          <ul><li>无需登录</li><li>不建立公开作品页</li><li>本站不保存图片</li></ul>
+          <h3>{{ t('home.trust.privacyTitle1') }}<br>{{ t('home.trust.privacyTitle2') }}</h3>
+          <p>{{ t('home.trust.privacyText') }}</p>
+          <div class="privacy-flow"><span>{{ t('home.trust.flow1') }}</span><i>→</i><span>{{ t('home.trust.flow2') }}</span><i>→</i><span>{{ t('home.trust.flow3') }}</span><i>→</i><span class="deleted">{{ t('home.trust.flow4') }}</span></div>
+          <ul><li>{{ t('home.trust.point1') }}</li><li>{{ t('home.trust.point2') }}</li><li>{{ t('home.trust.point3') }}</li></ul>
         </article>
       </div>
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+const { t } = useI18n()
+</script>
 
 <style scoped>
 .trust-section { padding: 115px 0; }.display-title { max-width: 980px; margin-top: 22px; font-size: clamp(42px, 5vw, 70px); }.lead { max-width: 850px; color: var(--muted); line-height: 1.9; }

@@ -1,6 +1,6 @@
 <template>
   <div class="site-shell">
-    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <a class="skip-link" href="#main-content">{{ t('common.skip') }}</a>
     <SiteHeader />
     <main id="main-content">
       <slot />
@@ -8,3 +8,7 @@
     <SiteFooter />
   </div>
 </template>
+
+<script setup lang="ts">
+const { t } = useI18n()
+</script>

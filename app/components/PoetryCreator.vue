@@ -10,13 +10,13 @@
       >
         <span class="corner c1" /><span class="corner c2" /><span class="corner c3" /><span class="corner c4" />
         <div class="mountain-mark" aria-hidden="true"><span /><span /><span /></div>
-        <h2>{{ dragging ? '松开，开始寻诗' : '将照片拖到这里' }}</h2>
-        <p>或点击选择图片</p>
-        <button class="primary-button upload-button" type="button" @click="fileInput?.click()">选择图片</button>
+        <h2>{{ dragging ? t('creator.dropRelease') : t('creator.dropTitle') }}</h2>
+        <p>{{ t('creator.chooseHint') }}</p>
+        <button class="primary-button upload-button" type="button" @click="fileInput?.click()">{{ t('creator.choose') }}</button>
         <input ref="fileInput" class="sr-only" type="file" accept="image/jpeg,image/png,image/webp" @change="onFileChange">
-        <p class="file-note">支持 JPG、PNG、WebP，最大 10 MB</p>
+        <p class="file-note">{{ t('creator.fileNote') }}</p>
         <p v-if="errorMessage" class="upload-error" role="alert">{{ errorMessage }}</p>
-        <p class="privacy-note"><Icon name="heroicons:lock-closed" /> 图片仅用于意境分析，本站不保存</p>
+        <p class="privacy-note"><Icon name="heroicons:lock-closed" /> {{ t('creator.privacyNote') }}</p>
       </div>
 
       <div class="sample-picker">
@@ -29,98 +29,98 @@
 
     <template v-else-if="state === 'analyzing'">
       <div class="preview-frame">
-        <span class="preview-label" :class="{ failed: analysisError }"><i /> {{ analysisError ? '处理未完成' : '正在理解图片并寻找诗句' }}</span>
-        <img :src="selectedImage" alt="待分析图片">
-        <button type="button" class="text-action" @click="reset">重新选择图片</button>
+        <span class="preview-label" :class="{ failed: analysisError }"><i /> {{ analysisError ? t('creator.incomplete') : t('creator.analyzingLabel') }}</span>
+        <img :src="selectedImage" :alt="t('creator.analyzingAlt')">
+        <button type="button" class="text-action" @click="reset">{{ t('creator.chooseAgain') }}</button>
       </div>
       <div class="analysis-panel">
-        <span class="section-kicker">意境分析</span>
+        <span class="section-kicker">{{ t('creator.analysisKicker') }}</span>
         <template v-if="!analysisError">
-          <h2 class="panel-title">正在感受画面并寻诗……</h2>
-          <p>读懂景物、时节与情绪，再从已校验的真实古诗中寻找最相合的一首。</p>
+          <h2 class="panel-title">{{ t('creator.analyzingTitle') }}</h2>
+          <p>{{ t('creator.analyzingText') }}</p>
           <ol class="progress-list analyzing-steps">
-            <li class="active"><b>辨认画面中的主体景物</b></li>
-            <li><b>判断时节、天气与光线</b></li>
-            <li><b>匹配真实诗词……</b></li>
+            <li class="active"><b>{{ t('creator.step1') }}</b></li>
+            <li><b>{{ t('creator.step2') }}</b></li>
+            <li><b>{{ t('creator.step3') }}</b></li>
           </ol>
         </template>
         <template v-else>
-          <h2 class="panel-title">这次没有读懂</h2>
+          <h2 class="panel-title">{{ t('creator.failedTitle') }}</h2>
           <p class="analysis-error" role="alert">{{ analysisError }}</p>
           <div class="analysis-actions">
-            <button class="primary-button" type="button" @click="retryAnalysis">重新尝试</button>
-            <button class="inline-link" type="button" @click="reset">重新选择图片</button>
+            <button class="primary-button" type="button" @click="retryAnalysis">{{ t('creator.retry') }}</button>
+            <button class="inline-link" type="button" @click="reset">{{ t('creator.chooseAgain') }}</button>
           </div>
         </template>
-        <p class="privacy-inline"><Icon name="heroicons:lock-closed" /> 图片仅用于意境分析，本站不保存</p>
+        <p class="privacy-inline"><Icon name="heroicons:lock-closed" /> {{ t('creator.privacyNote') }}</p>
       </div>
     </template>
 
     <template v-else-if="state === 'understood' && understandingResult">
       <div class="preview-frame">
-        <span class="preview-label success"><Icon name="heroicons:check" /> 理解完成</span>
-        <img :src="selectedImage" alt="已完成意境分析的图片">
-        <button type="button" class="text-action" @click="reset">重新选择图片</button>
+        <span class="preview-label success"><Icon name="heroicons:check" /> {{ t('creator.understood') }}</span>
+        <img :src="selectedImage" :alt="t('creator.understoodAlt')">
+        <button type="button" class="text-action" @click="reset">{{ t('creator.chooseAgain') }}</button>
       </div>
       <div class="understanding-panel">
-        <span class="section-kicker">画面意境</span>
-        <h2 class="panel-title">已读懂这幅画</h2>
+        <span class="section-kicker">{{ t('creator.moodKicker') }}</span>
+        <h2 class="panel-title">{{ t('creator.understoodTitle') }}</h2>
         <dl class="understanding-list">
-          <div><dt>看见</dt><dd>{{ understandingResult.subjects.join(' · ') }}</dd></div>
-          <div><dt>时节</dt><dd>{{ temporalDescription }}</dd></div>
-          <div><dt>意境</dt><dd>{{ understandingResult.mood }}</dd></div>
+          <div><dt>{{ t('creator.subjects') }}</dt><dd>{{ understandingResult.subjects.join(' · ') }}</dd></div>
+          <div><dt>{{ t('creator.time') }}</dt><dd>{{ temporalDescription }}</dd></div>
+          <div><dt>{{ t('creator.mood') }}</dt><dd>{{ understandingResult.mood }}</dd></div>
         </dl>
         <blockquote>{{ understandingResult.sceneSummary }}</blockquote>
-        <p class="confidence">理解可信度 {{ confidencePercent }}%</p>
+        <p class="confidence">{{ t('creator.confidence', { value: confidencePercent }) }}</p>
         <div class="analysis-actions">
-          <button class="primary-button" type="button" @click="retryAnalysis">重新分析</button>
-          <button class="inline-link" type="button" @click="reset">换一张图片</button>
+          <button class="primary-button" type="button" @click="retryAnalysis">{{ t('creator.analyzeAgain') }}</button>
+          <button class="inline-link" type="button" @click="reset">{{ t('creator.changeImage') }}</button>
         </div>
-        <p class="privacy-inline"><Icon name="heroicons:lock-closed" /> 图片仅用于意境分析，本站不保存</p>
+        <p class="privacy-inline"><Icon name="heroicons:lock-closed" /> {{ t('creator.privacyNote') }}</p>
       </div>
     </template>
 
     <template v-else-if="state === 'editor' && poetryMatch">
       <div class="preview-frame poster-preview">
-        <span class="preview-label"><i /> 实时预览</span>
+        <span class="preview-label"><i /> {{ t('creator.livePreview') }}</span>
         <div ref="posterCanvas" class="poster-canvas" :class="posterClasses">
-          <img :src="selectedImage" alt="配诗海报预览">
+          <img :src="selectedImage" :alt="t('creator.posterPreviewAlt')">
           <div ref="posterOverlay" class="vertical-poem">
             <strong ref="posterStrong"><template v-for="line in posterLines" :key="line">{{ line }}<br></template></strong>
             <small v-if="showAttribution" ref="posterAttribution">{{ previewAttribution }}</small>
             <span v-if="showStamp" ref="posterStamp" class="mini-stamp">寻诗</span>
           </div>
         </div>
-        <button type="button" class="text-action" @click="reset">重新选择图片</button>
+        <button type="button" class="text-action" @click="reset">{{ t('creator.chooseAgain') }}</button>
       </div>
       <div class="editor-panel">
-        <span class="section-kicker">最相合的诗句</span>
+        <span class="section-kicker">{{ t('creator.bestMatch') }}</span>
         <h2 class="poem-result">{{ posterText }}</h2>
         <p class="poem-source">{{ poemAttribution }}</p>
-        <p class="match-reason"><b>匹配理由：</b>{{ poetryMatch.match.reason }}</p>
-        <button class="inline-link" type="button" :aria-expanded="showFullPoem" @click="showFullPoem = !showFullPoem">{{ showFullPoem ? '收起全诗' : '查看全诗' }} <span>→</span></button>
+        <p class="match-reason"><b>{{ t('creator.reason') }}</b>{{ poetryMatch.match.reason }}</p>
+        <button class="inline-link" type="button" :aria-expanded="showFullPoem" @click="showFullPoem = !showFullPoem">{{ showFullPoem ? t('creator.collapsePoem') : t('creator.fullPoem') }} <span>→</span></button>
         <div v-if="showFullPoem" class="full-poem">
           <p><template v-for="line in poetryMatch.poem.lines" :key="line">{{ line }}<br></template></p>
         </div>
 
         <div class="controls">
-          <h3>调整排版</h3>
-          <OptionRow v-model="layout" label="版式" :items="['留白题诗', '古意竖排', '画心题跋']" />
-          <OptionRow v-model="font" label="字体" :items="['宋体', '楷体', '行楷']" />
-          <OptionRow v-model="position" label="位置" :items="['上', '中', '下']" />
-          <div class="color-row"><span>文字颜色</span><button v-for="color in colors" :key="color.name" class="color" :class="[color.className, { selected: textColor === color.name }]" type="button" :aria-label="color.name" :aria-pressed="textColor === color.name" @click="textColor = color.name" /></div>
-          <div class="switch-row"><label>显示作者与篇名 <input v-model="showAttribution" type="checkbox"><i /></label><label>显示印章 <input v-model="showStamp" type="checkbox"><i /></label></div>
+          <h3>{{ t('creator.adjust') }}</h3>
+          <OptionRow v-model="layout" :label="t('creator.layout')" :items="layoutOptions" />
+          <OptionRow v-model="font" :label="t('creator.font')" :items="fontOptions" />
+          <OptionRow v-model="position" :label="t('creator.position')" :items="positionOptions" />
+          <div class="color-row"><span>{{ t('creator.textColor') }}</span><button v-for="color in colors" :key="color.value" class="color" :class="[color.className, { selected: textColor === color.value }]" type="button" :aria-label="color.label" :aria-pressed="textColor === color.value" @click="textColor = color.value" /></div>
+          <div class="switch-row"><label>{{ t('creator.showAttribution') }} <input v-model="showAttribution" type="checkbox"><i /></label><label>{{ t('creator.showStamp') }} <input v-model="showStamp" type="checkbox"><i /></label></div>
         </div>
-        <button class="primary-button generate-button" type="button" :disabled="isGenerating" @click="generatePoster">{{ isGenerating ? '正在生成海报…' : '生成诗意海报' }}</button>
-        <small class="ratio-note">保持原图比例</small>
+        <button class="primary-button generate-button" type="button" :disabled="isGenerating" @click="generatePoster">{{ isGenerating ? t('creator.generating') : t('creator.generate') }}</button>
+        <small class="ratio-note">{{ t('creator.keepRatio') }}</small>
       </div>
     </template>
 
     <template v-else>
       <div class="preview-frame poster-preview generated-preview">
-        <span class="preview-label success"><Icon name="heroicons:check" /> 生成完成</span>
+        <span class="preview-label success"><Icon name="heroicons:check" /> {{ t('creator.generated') }}</span>
         <div class="poster-canvas" :class="posterClasses">
-          <img :src="posterUrl || selectedImage" alt="生成完成的诗意海报">
+          <img :src="posterUrl || selectedImage" :alt="t('creator.generatedAlt')">
           <div v-if="!posterUrl" class="vertical-poem">
             <strong><template v-for="line in posterLines" :key="line">{{ line }}<br></template></strong>
             <small v-if="showAttribution">{{ previewAttribution }}</small>
@@ -129,17 +129,17 @@
         </div>
       </div>
       <div class="result-panel">
-        <h2 class="panel-title">诗意海报已生成</h2>
-        <p class="result-lead">古人的诗句，已落在你的风景里。</p>
+        <h2 class="panel-title">{{ t('creator.generatedTitle') }}</h2>
+        <p class="result-lead">{{ t('creator.generatedLead') }}</p>
         <div class="result-meta">
           <b>《{{ poetryMatch?.poem.title }}》</b>
           <span>{{ poetryMatch?.poem.dynasty }} · {{ poetryMatch?.poem.author }}</span>
           <p class="result-poem"><template v-for="line in poetryMatch?.poem.lines" :key="line">{{ line }}<br></template></p>
         </div>
-        <a class="primary-button download-button" :href="posterUrl || selectedImage" :download="posterFilename"><Icon name="heroicons:arrow-down-tray" /> 下载高清图片</a>
-        <button class="inline-link redo" type="button" @click="reset">再做一张 <span>→</span></button>
-        <p class="trust-line">免费生成 · 无水印 · 无需登录</p>
-        <p class="deleted-line"><Icon name="heroicons:check-circle" /> 本站不保存原始图片</p>
+        <a class="primary-button download-button" :href="posterUrl || selectedImage" :download="posterFilename"><Icon name="heroicons:arrow-down-tray" /> {{ t('creator.download') }}</a>
+        <button class="inline-link redo" type="button" @click="reset">{{ t('creator.makeAnother') }} <span>→</span></button>
+        <p class="trust-line">{{ t('creator.resultTrust') }}</p>
+        <p class="deleted-line"><Icon name="heroicons:check-circle" /> {{ t('creator.originalNotSaved') }}</p>
       </div>
     </template>
   </div>
@@ -152,6 +152,7 @@ type State = 'idle' | 'analyzing' | 'understood' | 'editor' | 'generated'
 type Sample = { name: string, src: string }
 
 const assetPath = usePublicAsset()
+const { t } = useI18n()
 
 const emit = defineEmits<{ 'active-change': [active: boolean] }>()
 
@@ -182,11 +183,27 @@ let objectUrl: string | null = null
 let analysisRequestId = 0
 const { analyzeAndMatch, cancel: cancelImagePoetry } = useImagePoetry()
 
-const colors = [
-  { name: '墨黑', className: 'black' },
-  { name: '米白', className: 'cream' },
-  { name: '朱砂', className: 'red' }
-]
+const colors = computed(() => [
+  { value: '墨黑', label: t('creator.colors.black'), className: 'black' },
+  { value: '米白', label: t('creator.colors.cream'), className: 'cream' },
+  { value: '朱砂', label: t('creator.colors.red'), className: 'red' }
+])
+
+const layoutOptions = computed(() => [
+  { value: '留白题诗', label: t('creator.layouts.space') },
+  { value: '古意竖排', label: t('creator.layouts.vertical') },
+  { value: '画心题跋', label: t('creator.layouts.inscription') }
+])
+const fontOptions = computed(() => [
+  { value: '宋体', label: t('creator.fonts.song') },
+  { value: '楷体', label: t('creator.fonts.kai') },
+  { value: '行楷', label: t('creator.fonts.xingkai') }
+])
+const positionOptions = computed(() => [
+  { value: '上', label: t('creator.positions.top') },
+  { value: '中', label: t('creator.positions.middle') },
+  { value: '下', label: t('creator.positions.bottom') }
+])
 
 const posterClasses = computed(() => [
   `layout-${layout.value}`,
@@ -195,14 +212,14 @@ const posterClasses = computed(() => [
   `color-${textColor.value}`
 ])
 
-const samples: Sample[] = [
-  { name: '暮江落日', src: assetPath('images/examples/sunset-river.jpg') },
-  { name: '寒江孤舟', src: assetPath('images/examples/winter-boat.jpg') },
-  { name: '山中桃花', src: assetPath('images/examples/mountain-peach-blossom.jpg') }
-]
+const samples = computed<Sample[]>(() => [
+  { name: t('creator.samples.sunset'), src: assetPath('images/examples/sunset-river.jpg') },
+  { name: t('creator.samples.winter'), src: assetPath('images/examples/winter-boat.jpg') },
+  { name: t('creator.samples.peach'), src: assetPath('images/examples/mountain-peach-blossom.jpg') }
+])
 
 const temporalDescription = computed(() => understandingResult.value
-  ? [understandingResult.value.season, understandingResult.value.time, understandingResult.value.weather].filter((value, index, values) => value !== '无法确定' && values.indexOf(value) === index).join(' · ') || '无法确定'
+  ? [understandingResult.value.season, understandingResult.value.time, understandingResult.value.weather].filter((value, index, values) => value !== '无法确定' && values.indexOf(value) === index).join(' · ') || t('creator.unknown')
   : '')
 const confidencePercent = computed(() => Math.round((understandingResult.value?.confidence || 0) * 100))
 const matchedPoemLines = computed(() => {
@@ -225,7 +242,7 @@ const verticalAttribution = computed(() => compactAttribution.value
 const previewAttribution = computed(() => position.value === '上' || position.value === '下' || layout.value !== '古意竖排'
   ? poemAttribution.value
   : verticalAttribution.value)
-const posterFilename = computed(() => `见景寻诗-${poetryMatch.value?.poem.title || '诗意海报'}.jpg`)
+const posterFilename = computed(() => `${t('common.brand')}-${poetryMatch.value?.poem.title || t('creator.poster')}.jpg`)
 
 async function beginAnalysis(src: string, source: Blob | string = src) {
   const requestId = ++analysisRequestId
@@ -248,7 +265,7 @@ async function beginAnalysis(src: string, source: Blob | string = src) {
     state.value = 'editor'
   } catch (error) {
     if (requestId !== analysisRequestId || (error instanceof DOMException && error.name === 'AbortError')) return
-    analysisError.value = getImagePoetryErrorMessage(error)
+    analysisError.value = t(`errors.${getImagePoetryErrorCode(error)}`)
   }
 }
 
@@ -258,11 +275,11 @@ function retryAnalysis() { beginAnalysis(selectedImage.value, analysisSource.val
 function handleFile(file?: File) {
   if (!file) return
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-    errorMessage.value = '请选择 JPG、PNG 或 WebP 图片。'
+    errorMessage.value = t('creator.invalidType')
     return
   }
   if (file.size > 10 * 1024 * 1024) {
-    errorMessage.value = '图片超过 10 MB，请压缩后重新选择。'
+    errorMessage.value = t('creator.tooLarge')
     return
   }
   if (objectUrl) URL.revokeObjectURL(objectUrl)

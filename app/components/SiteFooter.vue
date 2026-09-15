@@ -3,28 +3,31 @@
     <div class="container-wide footer-main">
       <div class="footer-brand">
         <h2>
-          <NuxtLink to="/">见景寻诗</NuxtLink>
-          <img class="footer-stamp" :src="assetPath('images/hero/seal-poetry-mood.png')" alt="诗境">
+          <NuxtLink :to="localePath('/')">{{ t('common.brand') }}</NuxtLink>
+          <img class="footer-stamp" :src="assetPath('images/hero/seal-poetry-mood.png')" :alt="t('common.stampAlt')">
         </h2>
-        <p>为眼前的风景，寻找古人的诗句。</p>
+        <p>{{ t('footer.tagline') }}</p>
       </div>
-      <nav aria-label="站点导航">
-        <NuxtLink to="/#examples">示例作品</NuxtLink>
-        <NuxtLink to="/#how-it-works">如何使用</NuxtLink>
-        <NuxtLink to="/#about">关于寻诗</NuxtLink>
-        <NuxtLink to="/#faq">常见问题</NuxtLink>
+      <nav :aria-label="t('common.siteNav')">
+        <NuxtLink :to="homeLink('examples')">{{ t('nav.examples') }}</NuxtLink>
+        <NuxtLink :to="homeLink('how-it-works')">{{ t('nav.how') }}</NuxtLink>
+        <NuxtLink :to="homeLink('about')">{{ t('nav.about') }}</NuxtLink>
+        <NuxtLink :to="homeLink('faq')">{{ t('nav.faq') }}</NuxtLink>
       </nav>
-      <nav aria-label="法律信息">
-        <NuxtLink to="/privacy-policy">隐私政策</NuxtLink>
-        <NuxtLink to="/terms-of-service">服务条款</NuxtLink>
+      <nav :aria-label="t('common.legalNav')">
+        <NuxtLink :to="localePath('/privacy-policy')">{{ t('nav.privacy') }}</NuxtLink>
+        <NuxtLink :to="localePath('/terms-of-service')">{{ t('nav.terms') }}</NuxtLink>
       </nav>
     </div>
-    <div class="container-wide copyright">© 2026 见景寻诗</div>
+    <div class="container-wide copyright">© 2026 {{ t('common.brand') }}</div>
   </footer>
 </template>
 
 <script setup lang="ts">
 const assetPath = usePublicAsset()
+const { t } = useI18n()
+const localePath = useLocalePath()
+const homeLink = (anchor: string) => `${localePath('/')}#${anchor}`
 </script>
 
 <style scoped>

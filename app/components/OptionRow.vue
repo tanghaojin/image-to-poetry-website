@@ -4,18 +4,18 @@
     <div>
       <button
         v-for="item in items"
-        :key="item"
+        :key="item.value"
         type="button"
-        :class="{ selected: item === modelValue }"
-        :aria-pressed="item === modelValue"
-        @click="emit('update:modelValue', item)"
-      >{{ item }}</button>
+        :class="{ selected: item.value === modelValue }"
+        :aria-pressed="item.value === modelValue"
+        @click="emit('update:modelValue', item.value)"
+      >{{ item.label }}</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{ label: string, items: string[], modelValue: string }>()
+defineProps<{ label: string, items: Array<{ value: string, label: string }>, modelValue: string }>()
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 </script>
 

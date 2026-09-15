@@ -1,36 +1,39 @@
 <template>
   <header class="site-header">
     <div class="container-wide nav-inner">
-      <NuxtLink to="/" class="brand" aria-label="见景寻诗首页">
-        <span>见景寻诗</span>
-        <img class="brand-stamp" :src="assetPath('images/hero/seal-poetry-mood.png')" alt="诗境">
+      <NuxtLink :to="localePath('/')" class="brand" :aria-label="t('common.homeAria')">
+        <span>{{ t('common.brand') }}</span>
+        <img class="brand-stamp" :src="assetPath('images/hero/seal-poetry-mood.png')" :alt="t('common.stampAlt')">
       </NuxtLink>
 
-      <nav class="desktop-nav" aria-label="主导航">
-        <NuxtLink to="/#examples">示例作品</NuxtLink>
-        <NuxtLink to="/#how-it-works">如何使用</NuxtLink>
-        <NuxtLink to="/#about">关于寻诗</NuxtLink>
-        <NuxtLink to="/#faq">常见问题</NuxtLink>
+      <nav class="desktop-nav" :aria-label="t('common.mainNav')">
+        <NuxtLink :to="homeLink('examples')">{{ t('nav.examples') }}</NuxtLink>
+        <NuxtLink :to="homeLink('how-it-works')">{{ t('nav.how') }}</NuxtLink>
+        <NuxtLink :to="homeLink('about')">{{ t('nav.about') }}</NuxtLink>
+        <NuxtLink :to="homeLink('faq')">{{ t('nav.faq') }}</NuxtLink>
       </nav>
 
-      <button
-        class="menu-button"
-        type="button"
-        :aria-expanded="menuOpen"
-        aria-controls="mobile-menu"
-        aria-label="切换导航菜单"
-        @click="menuOpen = !menuOpen"
-      >
-        <Icon :name="menuOpen ? 'heroicons:x-mark' : 'heroicons:bars-2'" size="27" />
-      </button>
+      <div class="nav-actions">
+        <LocaleSwitcher :compact="isMobile" />
+        <button
+          class="menu-button"
+          type="button"
+          :aria-expanded="menuOpen"
+          aria-controls="mobile-menu"
+          :aria-label="t('common.toggleMenu')"
+          @click="menuOpen = !menuOpen"
+        >
+          <Icon :name="menuOpen ? 'heroicons:x-mark' : 'heroicons:bars-2'" size="27" />
+        </button>
+      </div>
     </div>
 
     <Transition name="menu-fade">
-      <nav v-if="menuOpen" id="mobile-menu" class="mobile-nav" aria-label="移动端导航">
-        <NuxtLink to="/#examples" @click="menuOpen = false">示例作品</NuxtLink>
-        <NuxtLink to="/#how-it-works" @click="menuOpen = false">如何使用</NuxtLink>
-        <NuxtLink to="/#about" @click="menuOpen = false">关于寻诗</NuxtLink>
-        <NuxtLink to="/#faq" @click="menuOpen = false">常见问题</NuxtLink>
+      <nav v-if="menuOpen" id="mobile-menu" class="mobile-nav" :aria-label="t('common.mobileNav')">
+        <NuxtLink :to="homeLink('examples')" @click="menuOpen = false">{{ t('nav.examples') }}</NuxtLink>
+        <NuxtLink :to="homeLink('how-it-works')" @click="menuOpen = false">{{ t('nav.how') }}</NuxtLink>
+        <NuxtLink :to="homeLink('about')" @click="menuOpen = false">{{ t('nav.about') }}</NuxtLink>
+        <NuxtLink :to="homeLink('faq')" @click="menuOpen = false">{{ t('nav.faq') }}</NuxtLink>
       </nav>
     </Transition>
   </header>
@@ -38,7 +41,21 @@
 
 <script setup lang="ts">
 const assetPath = usePublicAsset()
+const { t } = useI18n()
+const localePath = useLocalePath()
 const menuOpen = ref(false)
+const isMobile = ref(false)
+const homeLink = (anchor: string) => `${localePath('/')}#${anchor}`
+let media: MediaQueryList | undefined
+const updateMobile = () => { isMobile.value = media?.matches || false }
+
+onMounted(() => {
+  media = window.matchMedia('(max-width: 767px)')
+  updateMobile()
+  media.addEventListener('change', updateMobile)
+})
+
+onUnmounted(() => media?.removeEventListener('change', updateMobile))
 </script>
 
 <style scoped>
@@ -58,6 +75,7 @@ const menuOpen = ref(false)
 .desktop-nav a::after { position: absolute; left: 50%; bottom: 14px; width: 0; height: 1px; content: ""; background: var(--cinnabar); transition: .2s ease; }
 .desktop-nav a:hover::after { left: 0; width: 100%; }
 .menu-button { display: none; border: 0; background: transparent; padding: 8px; cursor: pointer; }
+.nav-actions { display: flex; align-items: center; gap: 8px; }
 .mobile-nav { position: absolute; inset: 68px 0 auto; display: grid; padding: 10px 24px 22px; border-bottom: 1px solid var(--line); background: var(--paper); box-shadow: 0 20px 35px rgba(60,45,30,.08); }
 .mobile-nav a { padding: 14px 4px; border-bottom: 1px solid var(--line); font-family: var(--serif); }
 .menu-fade-enter-active, .menu-fade-leave-active { transition: opacity .2s ease, transform .2s ease; }

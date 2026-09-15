@@ -50,20 +50,8 @@ function isValid(payload: unknown): payload is ImagePoetryResult {
     && value.match?.algorithmVersion && typeof value.meta?.processingMs === 'number')
 }
 
-export function getImagePoetryErrorMessage(error: unknown) {
-  if (!(error instanceof ImagePoetryError)) return '连接寻诗服务失败，请检查网络后重试。'
-  const messages: Record<ImagePoetryErrorCode, string> = {
-    fingerprint: '请求信息不完整，请刷新页面后重试。',
-    image: '图片内容异常，请重新选择图片。',
-    busy: '服务器繁忙，请稍后再试。',
-    timeout: '图片分析等待超时，请重新尝试。',
-    provider: '图片分析服务暂时不可用，请稍后再试。',
-    corpus: '诗词库正在准备中，请稍后再试。',
-    network: '连接寻诗服务失败，请检查网络后重试。',
-    'response-format': '寻诗结果格式异常，请重新尝试。',
-    request: '这次没有找到合适的诗句，请重新尝试。'
-  }
-  return messages[error.code]
+export function getImagePoetryErrorCode(error: unknown): ImagePoetryErrorCode {
+  return error instanceof ImagePoetryError ? error.code : 'network'
 }
 
 export function useImagePoetry() {

@@ -3,14 +3,14 @@
     <div class="closing-main">
       <div class="container-wide closing-grid">
         <div class="closing-copy">
-          <span class="section-kicker">再寻一景</span>
-          <h2 class="display-title">你的照片里，<br>藏着哪一句诗？</h2>
-          <p>上传一张照片，让千年前的诗句与眼前的风景相遇。</p>
-          <a class="primary-button" href="#top">上传照片，开始寻诗</a>
-          <small>免费使用 · 无需登录 · 保持原图比例</small>
+          <span class="section-kicker">{{ t('home.cta.kicker') }}</span>
+          <h2 class="display-title">{{ t('home.cta.title1') }}<br>{{ t('home.cta.title2') }}</h2>
+          <p>{{ t('home.cta.text') }}</p>
+          <a class="primary-button" href="#top">{{ t('home.cta.button') }}</a>
+          <small>{{ t('home.cta.note') }}</small>
         </div>
         <figure>
-          <img :src="assetPath('images/examples/sunset-river.jpg')" alt="落日映照山水">
+          <img :src="assetPath('images/examples/sunset-river.jpg')" :alt="t('home.cta.imageAlt')">
           <blockquote>一道残阳铺水中，<br>半江瑟瑟半江红。</blockquote>
         </figure>
       </div>
@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 const assetPath = usePublicAsset()
+const { t } = useI18n()
 </script>
 
 <style scoped>

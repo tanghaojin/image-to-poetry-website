@@ -2,9 +2,9 @@
   <section id="faq" class="faq-section">
     <div class="container-wide faq-grid">
       <div class="faq-heading">
-        <span class="section-kicker dark">寻诗问答</span>
-        <h2 class="display-title">常见问题</h2>
-        <p>关于诗词、图片与生成方式，<br>你想知道的都在这里。</p>
+        <span class="section-kicker dark">{{ t('home.faq.kicker') }}</span>
+        <h2 class="display-title">{{ t('home.faq.title') }}</h2>
+        <p>{{ t('home.faq.intro1') }}<br>{{ t('home.faq.intro2') }}</p>
         <span class="question-mark" aria-hidden="true">？</span>
       </div>
       <div class="faq-list">
@@ -14,7 +14,7 @@
           </button>
           <Transition name="answer"><p v-if="openIndex === index">{{ item.answer }}</p></Transition>
         </article>
-        <footer>真实古句 · 原图比例 · 免费使用 · 无需登录</footer>
+        <footer>{{ t('home.faq.footer') }}</footer>
       </div>
     </div>
   </section>
@@ -22,14 +22,8 @@
 
 <script setup lang="ts">
 const openIndex = ref(0)
-const items = [
-  { question: '推荐的诗词是真实的吗？', answer: '是。所有推荐内容均来自真实古典诗词，并展示篇名、作者和朝代。' },
-  { question: '系统如何选择诗词？', answer: '系统会综合分析图片中的景物、时节、色彩和情绪，再从诗词库中选择整体意境最相合的一句。' },
-  { question: '为什么只推荐一句？', answer: '我们希望减少选择负担，因此会直接呈现综合匹配度最高的结果。' },
-  { question: '哪些图片更适合寻诗？', answer: '风景、花木、动物、古建筑和具有明确氛围的生活照片通常能获得更贴切的结果。' },
-  { question: '是否免费，需要注册吗？', answer: '首版免费使用，无需注册或登录。' },
-  { question: '下载的图片会改变尺寸吗？', answer: '生成结果会保持原图比例，不进行强制裁切。' }
-]
+const { t } = useI18n()
+const items = computed(() => [1, 2, 3, 4, 5, 6].map(index => ({ question: t(`home.faq.items.${index}.question`), answer: t(`home.faq.items.${index}.answer`) })))
 </script>
 
 <style scoped>

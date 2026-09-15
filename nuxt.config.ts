@@ -20,6 +20,7 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxt/icon',
+    '@nuxtjs/i18n',
     '@nuxtjs/robots',
     '@nuxtjs/sitemap'
   ],
@@ -30,6 +31,18 @@ export default defineNuxtConfig({
     defaultLocale: 'zh-CN',
     indexable: isProduction
   },
+  i18n: {
+    baseUrl: siteURL,
+    strategy: 'prefix_except_default',
+    defaultLocale: 'zh-CN',
+    langDir: 'locales',
+    detectBrowserLanguage: false,
+    locales: [
+      { code: 'zh-CN', language: 'zh-CN', name: '简体中文', file: 'zh-CN.json' },
+      { code: 'zh-TW', language: 'zh-TW', name: '繁體中文', file: 'zh-TW.json' },
+      { code: 'en', language: 'en', name: 'English', file: 'en.json' }
+    ]
+  },
   sitemap: {},
   css: ['~/assets/css/main.css'],
   vite: {
@@ -38,7 +51,6 @@ export default defineNuxtConfig({
   app: {
     baseURL,
     head: {
-      htmlAttrs: { lang: 'zh-CN' },
       title: siteTitle,
       titleTemplate: '%s',
       link: [

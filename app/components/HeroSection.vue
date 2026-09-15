@@ -5,13 +5,13 @@
 
     <div class="container-wide hero-stage">
       <div v-show="!creatorActive" class="hero-copy">
-        <span class="section-kicker">免费图片配诗工具</span>
-        <h1 class="display-title">为你眼中的风景，<br>寻一句千年前的回响</h1>
-        <p class="hero-subtitle">上传一张照片，找到最贴近画面意境的真实古典诗词。</p>
-        <p class="hero-trust">真实诗词出处 <i /> 免费使用 <i /> 无需登录</p>
+        <span class="section-kicker">{{ t('home.hero.kicker') }}</span>
+        <h1 class="display-title">{{ t('home.hero.title1') }}<br>{{ t('home.hero.title2') }}</h1>
+        <p class="hero-subtitle">{{ t('home.hero.subtitle') }}</p>
+        <p class="hero-trust">{{ t('home.hero.trust1') }} <i /> {{ t('home.hero.trust2') }} <i /> {{ t('home.hero.trust3') }}</p>
         <div class="side-note" aria-hidden="true">
-          <img :src="assetPath('images/hero/seal-brand.png')" alt="见景寻诗篆刻印章">
-          <span>山河入镜<br>诗意自来</span>
+          <img :src="assetPath('images/hero/seal-brand.png')" :alt="t('home.hero.sealAlt')">
+          <span>{{ t('home.hero.note1') }}<br>{{ t('home.hero.note2') }}</span>
         </div>
       </div>
       <PoetryCreator @active-change="creatorActive = $event" />
@@ -22,6 +22,7 @@
 
 <script setup lang="ts">
 const assetPath = usePublicAsset()
+const { t } = useI18n()
 const creatorActive = ref(false)
 </script>
 

@@ -10,9 +10,11 @@
 </template>
 
 <script setup lang="ts">
-const siteUrl = 'https://imagetopoetry.com/'
-const title = '见景寻诗｜上传照片智能匹配真实古典诗词并生成高清诗意海报的免费在线图片配诗创作工具'
-const description = '上传一张照片，找到最贴近画面意境的真实古典诗词，并生成保持原图比例的高清诗意海报。'
+const { t } = useI18n()
+const route = useRoute()
+const siteUrl = computed(() => `https://imagetopoetry.com${route.path === '/' ? '/' : route.path}`)
+const title = computed(() => t('seo.home.title'))
+const description = computed(() => t('seo.home.description'))
 const socialImage = 'https://imagetopoetry.com/images/examples/sunset-river.jpg'
 
 useSeoMeta({
@@ -29,9 +31,9 @@ useSeoMeta({
   twitterImage: socialImage
 })
 
-useHead({
+useHead(() => ({
   link: [
-    { rel: 'canonical', href: siteUrl }
+    { rel: 'canonical', href: siteUrl.value }
   ]
-})
+}))
 </script>

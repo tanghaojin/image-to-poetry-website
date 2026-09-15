@@ -1,0 +1,563 @@
+{
+  "language": {
+    "label": "Change interface language"
+  },
+  "common": {
+    "brand": "Image to Poetry",
+    "homeAria": "Image to Poetry home",
+    "stampAlt": "Poetic mood seal",
+    "mainNav": "Main navigation",
+    "mobileNav": "Mobile navigation",
+    "siteNav": "Site navigation",
+    "legalNav": "Legal information",
+    "toggleMenu": "Toggle navigation menu",
+    "skip": "Skip to main content"
+  },
+  "nav": {
+    "examples": "Examples",
+    "how": "How it works",
+    "about": "About",
+    "faq": "FAQ",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "footer": {
+    "tagline": "Find an ancient verse for the scene before you."
+  },
+  "seo": {
+    "home": {
+      "title": "Image to Poetry — Match photos with authentic classical Chinese poetry and create poetic posters",
+      "description": "Upload a photo, discover an authentic classical Chinese verse that matches its mood, and create a high-resolution poetic poster in the original aspect ratio."
+    }
+  },
+  "home": {
+    "hero": {
+      "kicker": "Free image-to-poetry tool",
+      "title1": "Find an ancient echo",
+      "title2": "for the scene before you",
+      "subtitle": "Upload a photo and discover an authentic classical Chinese poem that best matches its mood.",
+      "trust1": "Verified sources",
+      "trust2": "Free",
+      "trust3": "No sign-in",
+      "sealAlt": "Image to Poetry carved seal",
+      "note1": "Mountains enter the frame",
+      "note2": "Poetry follows"
+    },
+    "examples": {
+      "kicker": "Selected works",
+      "title": "The ancients have already written of this same view",
+      "text": "From mountains and plants to everyday life, every scene may echo a classical poem.",
+      "hint": "Use the button below each work to view the original photo before poetry was added.",
+      "sunsetAlt": "Sunset over the river",
+      "winterAlt": "A lone boat on a winter river",
+      "peachAlt": "Peach blossoms in the mountains",
+      "viewPoem": "View with poem",
+      "viewOriginal": "View original",
+      "cta": "Try it with a sample image"
+    },
+    "how": {
+      "kicker": "The path to a poem",
+      "title": "One photo, one encounter across a thousand years",
+      "intro": "From the scene before you to an ancient line, in four steps.",
+      "steps": {
+        "1": {
+          "title": "Upload a photo",
+          "text": "Choose a landscape, flower, architecture, or everyday photo."
+        },
+        "2": {
+          "title": "Read the mood",
+          "text": "Understand its subjects, season, colors, and emotion."
+        },
+        "3": {
+          "title": "Find a verse",
+          "text": "Match it with the closest line from authentic classical poetry."
+        },
+        "4": {
+          "title": "Create a poster",
+          "text": "Adjust the layout and download a high-resolution image in its original ratio."
+        }
+      },
+      "imageAlt": "A lone boat on a winter lake",
+      "sample": "Mood analysis sample",
+      "scene": "Scene: cold river · lone boat · frosted woods",
+      "season": "Season: winter · early morning",
+      "mood": "Mood: tranquil · distant",
+      "storyTitle": "See more than objects—read the mood",
+      "storyText": "A bright moon does not always mean homesickness, nor do falling flowers only mean sorrow. Image to Poetry considers scenery, season, color, and emotion to find the verse whose overall mood fits best.",
+      "dimension1": "Scene aligned",
+      "dimension2": "Season aligned",
+      "dimension3": "Emotion aligned",
+      "dimension4": "Source verified"
+    },
+    "trust": {
+      "kicker": "Grounded in sources",
+      "title": "Authentic ancient lines, never invented imitations",
+      "lead": "Image to Poetry searches only classical poems with a known author and source. The system interprets your image and matches its mood; it does not imitate classical poetry or pass machine-written text off as an ancient work.",
+      "verified": "Verified",
+      "proof1Title": "Text verified",
+      "proof1Text": "Checked against authoritative editions",
+      "proof2Title": "Author identified",
+      "proof2Text": "Author, dynasty, and title included",
+      "proof3Title": "Traceable source",
+      "proof3Text": "Drawn from classical poetry sources",
+      "privacyTitle1": "Your photo belongs to you,",
+      "privacyTitle2": "and serves only this search",
+      "privacyText": "The image is used only to analyze its mood and is not stored by this site.",
+      "flow1": "Choose image",
+      "flow2": "Browser processing",
+      "flow3": "Mood analysis",
+      "flow4": "Not stored",
+      "point1": "No sign-in",
+      "point2": "No public gallery page",
+      "point3": "Images are not stored"
+    },
+    "faq": {
+      "kicker": "Questions about finding poetry",
+      "title": "Frequently asked questions",
+      "intro1": "About poems, images, and poster creation—",
+      "intro2": "everything you may want to know is here.",
+      "footer": "Authentic verse · Original ratio · Free to use · No sign-in",
+      "items": {
+        "1": {
+          "question": "Are the recommended poems authentic?",
+          "answer": "Yes. Every recommendation comes from authentic classical poetry and includes its title, author, and dynasty."
+        },
+        "2": {
+          "question": "How does the system choose a poem?",
+          "answer": "It analyzes the scene, season, colors, and emotion, then selects the line whose overall mood is the closest match."
+        },
+        "3": {
+          "question": "Why recommend only one line?",
+          "answer": "To reduce decision fatigue, we present the result with the strongest overall match."
+        },
+        "4": {
+          "question": "What kinds of images work best?",
+          "answer": "Landscapes, plants, animals, traditional architecture, and everyday photos with a clear atmosphere usually produce the closest matches."
+        },
+        "5": {
+          "question": "Is it free? Do I need an account?",
+          "answer": "The first release is free and requires no registration or sign-in."
+        },
+        "6": {
+          "question": "Will the downloaded image be resized?",
+          "answer": "The generated result keeps the original aspect ratio and is not forcibly cropped."
+        }
+      }
+    },
+    "cta": {
+      "kicker": "Find another scene",
+      "title1": "Which line of poetry",
+      "title2": "is hidden in your photo?",
+      "text": "Upload a photo and let a verse from a thousand years ago meet the view before you.",
+      "button": "Upload a photo and find a poem",
+      "note": "Free to use · No sign-in · Original aspect ratio",
+      "imageAlt": "Sunset over mountains and water"
+    }
+  },
+  "creator": {
+    "dropRelease": "Release to find a poem",
+    "dropTitle": "Drop your photo here",
+    "chooseHint": "or click to choose an image",
+    "choose": "Choose image",
+    "fileNote": "JPG, PNG, or WebP, up to 10 MB",
+    "privacyNote": "Used only for mood analysis; this site does not store it",
+    "incomplete": "Processing incomplete",
+    "analyzingLabel": "Understanding the image and finding a poem",
+    "analyzingAlt": "Image awaiting analysis",
+    "chooseAgain": "Choose another image",
+    "analysisKicker": "Mood analysis",
+    "analyzingTitle": "Reading the scene and searching for poetry…",
+    "analyzingText": "We read the scenery, season, and emotion, then search verified classical poetry for the closest match.",
+    "step1": "Identifying the main subjects",
+    "step2": "Reading the season, weather, and light",
+    "step3": "Matching authentic poetry…",
+    "failedTitle": "We could not read this image",
+    "retry": "Try again",
+    "understood": "Analysis complete",
+    "understoodAlt": "Image with completed mood analysis",
+    "moodKicker": "Mood of the scene",
+    "understoodTitle": "We have read this image",
+    "subjects": "Subjects",
+    "time": "Time",
+    "mood": "Mood",
+    "confidence": "Analysis confidence {value}%",
+    "analyzeAgain": "Analyze again",
+    "changeImage": "Change image",
+    "livePreview": "Live preview",
+    "posterPreviewAlt": "Poetry poster preview",
+    "bestMatch": "Best-matching verse",
+    "reason": "Why it matches: ",
+    "collapsePoem": "Hide full poem",
+    "fullPoem": "View full poem",
+    "adjust": "Adjust layout",
+    "layout": "Layout",
+    "font": "Typeface",
+    "position": "Position",
+    "textColor": "Text color",
+    "showAttribution": "Show author and title",
+    "showStamp": "Show seal",
+    "generating": "Creating poster…",
+    "generate": "Create poetic poster",
+    "keepRatio": "Keeps the original aspect ratio",
+    "generated": "Complete",
+    "generatedAlt": "Generated poetry poster",
+    "generatedTitle": "Your poetic poster is ready",
+    "generatedLead": "An ancient verse now rests within your landscape.",
+    "download": "Download high-resolution image",
+    "makeAnother": "Create another",
+    "resultTrust": "Free · No watermark · No sign-in",
+    "originalNotSaved": "This site does not store the original image",
+    "unknown": "Unknown",
+    "poster": "Poetry Poster",
+    "invalidType": "Please choose a JPG, PNG, or WebP image.",
+    "tooLarge": "The image is over 10 MB. Please compress it and try again.",
+    "layouts": {
+      "space": "Open space",
+      "vertical": "Vertical",
+      "inscription": "Inscription"
+    },
+    "fonts": {
+      "song": "Song",
+      "kai": "Kai",
+      "xingkai": "Running Kai"
+    },
+    "positions": {
+      "top": "Top",
+      "middle": "Middle",
+      "bottom": "Bottom"
+    },
+    "colors": {
+      "black": "Ink black",
+      "cream": "Warm white",
+      "red": "Cinnabar"
+    },
+    "samples": {
+      "sunset": "River sunset",
+      "winter": "Lone winter boat",
+      "peach": "Mountain peach blossoms"
+    }
+  },
+  "errors": {
+    "fingerprint": "Request details are incomplete. Refresh the page and try again.",
+    "image": "The image could not be read. Please choose another image.",
+    "busy": "The server is busy. Please try again shortly.",
+    "timeout": "Image analysis timed out. Please try again.",
+    "provider": "Image analysis is temporarily unavailable. Please try again later.",
+    "corpus": "The poetry collection is being prepared. Please try again later.",
+    "network": "Could not connect to the poetry service. Check your connection and try again.",
+    "response-format": "The poetry result had an unexpected format. Please try again.",
+    "request": "No suitable verse was found this time. Please try again."
+  },
+  "legal": {
+    "updated": "Last updated: September 14, 2026"
+  },
+  "privacy": {
+    "eyebrow": "Images and data",
+    "title": "Privacy Policy",
+    "intro": "Image to Poetry (referred to as “the site” or “we”) values your privacy. This policy explains what information is processed when you use image understanding, poetry matching, and poster creation; why it is processed; and how it is retained and shared.",
+    "seo": {
+      "title": "Privacy Policy — Image to Poetry",
+      "description": "Learn how Image to Poetry handles uploaded images, essential technical information, and third-party services during image understanding, poetry matching, and poster creation."
+    },
+    "sections": [
+      {
+        "title": "1. Scope",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "This policy applies to imagetopoetry.com and its related image-to-poetry services. You can use the site without registering or signing in, and we do not actively ask for your name, phone number, or account details."
+          }
+        ]
+      },
+      {
+        "title": "2. Information we process",
+        "blocks": [
+          {
+            "type": "heading",
+            "text": "Images you choose"
+          },
+          {
+            "type": "paragraph",
+            "text": "When you choose an image and start a search, it is uploaded from your browser to our server. The server validates its format and size and creates an analysis copy with a longest edge of no more than 1,600 pixels to understand the scene and match poetry."
+          },
+          {
+            "type": "heading",
+            "text": "Essential technical information"
+          },
+          {
+            "type": "paragraph",
+            "text": "For security, troubleshooting, and reliable operation, servers, network providers, and hosting infrastructure may process necessary access logs such as request time, request ID, IP address, browser or device type, and response status."
+          }
+        ]
+      },
+      {
+        "title": "3. How information is used",
+        "blocks": [
+          {
+            "type": "list",
+            "items": [
+              "Understand the subjects, season, weather, and overall mood of an image;",
+              "Match authentic classical poetry from our collection;",
+              "Preview, lay out, and download a poetic poster in your browser;",
+              "Diagnose faults and improve service reliability and response quality."
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "We do not use this information to build advertising profiles, and we do not sell your images or technical information."
+          }
+        ]
+      },
+      {
+        "title": "4. Image understanding and third-party processing",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "To understand an image, the site may send a compressed copy and the necessary prompt to a third-party artificial intelligence provider, depending on service availability."
+          },
+          {
+            "type": "paragraph",
+            "text": "Third-party providers process inputs under their own terms and privacy policies. They may use submitted content and generated results to provide, maintain, or improve their services and may perform necessary safety reviews. Do not upload images containing sensitive personal information, confidential information, or content you are not entitled to provide."
+          },
+          {
+            "type": "notice",
+            "text": "By submitting an image, you understand that an analysis copy must be transmitted to a third-party provider and that cross-border data transfer may occur. You can stop this processing by not uploading an image."
+          }
+        ]
+      },
+      {
+        "title": "5. Retention and deletion",
+        "blocks": [
+          {
+            "type": "list",
+            "items": [
+              "We do not create user accounts or public work pages, and uploaded images are not written to our business database.",
+              "The server processes images in memory during the request and does not retain them long-term for purposes beyond providing the service.",
+              "Original-image preview and final poster creation happen primarily in your browser; you manage downloaded files yourself.",
+              "Retention rules for third-party AI services and infrastructure logs are governed by the respective providers’ terms."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "6. Cookies and local storage",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "The site currently does not use advertising cookies. To support essential functions and service security, your browser may use local storage for necessary technical information. You may clear site data in your browser settings, though doing so may affect some features."
+          }
+        ]
+      },
+      {
+        "title": "7. Sharing and disclosure",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "Apart from AI providers needed for image understanding and hosting or network providers needed to operate the site, we do not actively sell or rent your information to other third parties. We may disclose relevant information when required by applicable law, legal process, or a competent authority, and only to the necessary extent."
+          }
+        ]
+      },
+      {
+        "title": "8. Data security",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "We use reasonable safeguards including access controls, key isolation, hashed device identifiers, and encryption in transit. Internet transmission and electronic storage are never completely secure, so avoid uploading sensitive or private images, or images whose exposure would create unacceptable risk."
+          }
+        ]
+      },
+      {
+        "title": "9. Minors",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "The site is not intended for anyone under 18. Minors should not upload images or use the site on their own. A guardian who becomes aware of such use may contact us as described below."
+          }
+        ]
+      },
+      {
+        "title": "10. Your choices and contact",
+        "blocks": [
+          {
+            "type": "contact",
+            "before": "You may stop using the site, clear its browser data, or stop submitting images at any time. For questions about this policy, data processing, or deletion requests, email ",
+            "middle": " or contact us through the ",
+            "linkLabel": "project maintainer’s GitHub page",
+            "after": ". Do not submit images or other sensitive information on a public page."
+          }
+        ]
+      },
+      {
+        "title": "11. Changes to this policy",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "We may update this policy when features, service providers, or legal requirements change. The new version will be posted here with an updated “Last updated” date; material changes will be highlighted on the site where reasonably possible."
+          }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "eyebrow": "Usage agreement",
+    "title": "Terms of Service",
+    "intro": "Welcome to Image to Poetry. By accessing or using imagetopoetry.com, you acknowledge that you have read and agreed to these Terms of Service. If you do not agree with any part, stop using the site and related services.",
+    "seo": {
+      "title": "Terms of Service — Image to Poetry",
+      "description": "Review the service description, free usage allowance, image permissions, usage restrictions, poetry matching notes, and limitations of liability for Image to Poetry."
+    },
+    "sections": [
+      {
+        "title": "1. Service description",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "Image to Poetry provides AI-assisted image understanding, authentic classical poetry matching, layout preview, and poetic poster creation. You can upload an eligible image without registering, view its match, and create and download a poster in your browser."
+          },
+          {
+            "type": "paragraph",
+            "text": "We may adjust models, the poetry collection, page features, file limits, and workflows as technical conditions change. Service may be temporarily interrupted by maintenance, third-party failures, or resource limits."
+          }
+        ]
+      },
+      {
+        "title": "2. Eligibility",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "You must be at least 18 and able to understand and agree to these terms. If you use the site on behalf of an organization, you confirm that you have authority to bind that organization to these terms."
+          }
+        ]
+      },
+      {
+        "title": "3. Free allowance and fair use",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "The site currently provides a free usage allowance and applies necessary anti-abuse controls. The available allowance is determined by the notices shown on the site and actual service conditions."
+          },
+          {
+            "type": "paragraph",
+            "text": "We may adjust allowances, reject anomalous requests, or restrict automated or large-scale access that affects other users, based on resource costs, security risk, or third-party service limits."
+          }
+        ]
+      },
+      {
+        "title": "4. Your images and processing permission",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "You retain the rights you lawfully hold in uploaded images. You confirm that you lawfully possess or have the necessary permission for each image and that it does not infringe another person’s copyright, publicity, privacy, or other lawful rights."
+          },
+          {
+            "type": "paragraph",
+            "text": "To provide image understanding, poetry matching, and poster creation, you grant us a non-exclusive, limited permission to read, compress, transmit, and analyze an image solely as necessary to provide that service. This permission does not allow us to publish or sell your image."
+          }
+        ]
+      },
+      {
+        "title": "5. Usage restrictions",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "When using the site, you must not:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Violate applicable law or the lawful rights of any third party;",
+              "Upload images you are not entitled to process, sensitive personal information, confidential material, or malicious content;",
+              "Distribute viruses or malicious code, or attempt unauthorized access to, testing of, or damage to the site;",
+              "Bypass usage limits, security controls, or safeguards of an AI provider;",
+              "Use scripts, bots, or other automation for bulk requests, scraping, or resource consumption;",
+              "Impersonate the site, resell its interfaces, or misrepresent the source of the service."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "6. Poetry and AI results",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "We make reasonable efforts to use authentic classical poetry and provide the author, title, and text. Image understanding, mood matching, and text layout are automated and may contain recognition errors, inaccurate matches, textual variants, or layout errors."
+          },
+          {
+            "type": "paragraph",
+            "text": "Matches are provided for cultural appreciation and creative reference only, not as a professional, academic, or factual guarantee. Before publication, commercial promotion, educational use, or another important use, verify the original poem, source, permissions, and poster content yourself."
+          }
+        ]
+      },
+      {
+        "title": "7. Intellectual property",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "The site’s software, interface, branding, original copy, and visual design are protected by applicable intellectual property laws. Protected content may not be copied, adapted, sold, or otherwise exploited without permission."
+          },
+          {
+            "type": "paragraph",
+            "text": "Your lawful rights in an original image do not transfer to us when you use the site. A generated poster includes your image, classical poetry, and our layout elements; you are responsible for confirming that each element meets the rights and attribution requirements of your intended use."
+          }
+        ]
+      },
+      {
+        "title": "8. Privacy and third-party services",
+        "blocks": [
+          {
+            "type": "privacy-link",
+            "before": "For details about how we process information, see the ",
+            "after": " Image understanding depends on third-party AI providers, and related requests are also subject to those providers’ terms and policies."
+          }
+        ]
+      },
+      {
+        "title": "9. Availability and termination",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "The site is provided “as is” and “as available.” We do not promise that it will remain free, continuously available, error-free, or suitable for every purpose. We may restrict or stop requests that violate these terms, threaten system security, or affect other users."
+          }
+        ]
+      },
+      {
+        "title": "10. Limitation of liability",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "To the extent permitted by applicable law, we are not liable for indirect, incidental, or consequential losses arising from service interruptions, third-party failures, inaccurate results, data loss, use of content, or a user’s violation of third-party rights. Save your downloaded results and assess the risks of use yourself."
+          },
+          {
+            "type": "paragraph",
+            "text": "Nothing in these terms excludes or limits liability that applicable law does not permit to be excluded or limited."
+          }
+        ]
+      },
+      {
+        "title": "11. Updates and disputes",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "We may update these terms as features, operations, or legal requirements change. Updated terms take effect when posted on this page; continued use means you accept the update."
+          },
+          {
+            "type": "paragraph",
+            "text": "If a dispute arises from these terms or the service, both parties should first seek an amicable resolution. If that fails, the dispute will be resolved under applicable law by a body with proper jurisdiction."
+          }
+        ]
+      },
+      {
+        "title": "12. Contact us",
+        "blocks": [
+          {
+            "type": "contact",
+            "before": "Questions about these terms may be sent to ",
+            "middle": " or through the ",
+            "linkLabel": "project maintainer’s GitHub page",
+            "after": ". Do not submit images or other sensitive information on a public page."
+          }
+        ]
+      }
+    ]
+  }
+}

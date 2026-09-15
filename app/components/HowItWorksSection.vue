@@ -1,9 +1,9 @@
 <template>
   <section id="how-it-works" class="how-section ink-landscape">
     <div class="container-wide">
-      <span class="section-kicker">寻诗之路</span>
-      <h2 class="display-title">一张照片，一次跨越千年的相遇</h2>
-      <p class="intro">从眼前的景，到古人的句，只需四步。</p>
+      <span class="section-kicker">{{ t('home.how.kicker') }}</span>
+      <h2 class="display-title">{{ t('home.how.title') }}</h2>
+      <p class="intro">{{ t('home.how.intro') }}</p>
 
       <div class="journey">
         <div v-for="(step, index) in steps" :key="step.title" class="step">
@@ -13,13 +13,13 @@
 
       <div class="analysis-story">
         <figure>
-          <img :src="assetPath('images/examples/winter-boat.jpg')" alt="冬日湖上孤舟">
-          <figcaption><b>意境分析样本</b><span>景物：寒江 · 孤舟 · 霜林</span><span>时节：冬日 · 清晨</span><span>意境：清寂 · 悠远</span></figcaption>
+          <img :src="assetPath('images/examples/winter-boat.jpg')" :alt="t('home.how.imageAlt')">
+          <figcaption><b>{{ t('home.how.sample') }}</b><span>{{ t('home.how.scene') }}</span><span>{{ t('home.how.season') }}</span><span>{{ t('home.how.mood') }}</span></figcaption>
         </figure>
         <div class="story-copy">
-          <h3>不只是看见景物，更要读懂意境</h3>
-          <p>看见明月，不一定就是思乡；看见落花，也不一定只有伤感。见景寻诗会结合景物、时节、色彩与情绪，寻找整体意境最相合的一句。</p>
-          <div class="dimensions"><span>景物相合</span><span>时节相应</span><span>情绪相通</span><span>出处真实</span></div>
+          <h3>{{ t('home.how.storyTitle') }}</h3>
+          <p>{{ t('home.how.storyText') }}</p>
+          <div class="dimensions"><span>{{ t('home.how.dimension1') }}</span><span>{{ t('home.how.dimension2') }}</span><span>{{ t('home.how.dimension3') }}</span><span>{{ t('home.how.dimension4') }}</span></div>
         </div>
       </div>
     </div>
@@ -28,12 +28,8 @@
 
 <script setup lang="ts">
 const assetPath = usePublicAsset()
-const steps = [
-  { title: '上传照片', text: '选择一张风景、花木、建筑或生活照片。' },
-  { title: '感受意境', text: '理解景物、时节、色彩与情绪。' },
-  { title: '寻找诗句', text: '从真实古典诗词中匹配最相合的一句。' },
-  { title: '生成海报', text: '调整排版，按原图比例下载高清图片。' }
-]
+const { t } = useI18n()
+const steps = computed(() => [1, 2, 3, 4].map(index => ({ title: t(`home.how.steps.${index}.title`), text: t(`home.how.steps.${index}.text`) })))
 </script>
 
 <style scoped>
