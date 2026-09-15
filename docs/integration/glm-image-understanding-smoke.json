@@ -3,7 +3,7 @@
   "primaryModel": "glm-4.6v-flash",
   "primaryObservedErrorCode": "1305",
   "actualModel": "glm-4.1v-thinking-flash",
-  "image": "public/images/examples/winter-boat.jpg",
+  "image": "public/images/examples/winter-boat.webp",
   "elapsedMs": 9447,
   "result": {
     "subjects": [

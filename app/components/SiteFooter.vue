@@ -4,7 +4,7 @@
       <div class="footer-brand">
         <h2>
           <NuxtLink :to="localePath('/')">{{ t('common.brand') }}</NuxtLink>
-          <img class="footer-stamp" :src="assetPath('images/hero/seal-poetry-mood.png')" :alt="t('common.stampAlt')">
+          <img class="footer-stamp" :src="assetPath('images/hero/seal-poetry-mood.webp')" :alt="t('common.stampAlt')">
         </h2>
         <p>{{ t('footer.tagline') }}</p>
       </div>

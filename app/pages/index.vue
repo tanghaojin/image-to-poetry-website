@@ -15,7 +15,7 @@ const route = useRoute()
 const siteUrl = computed(() => `https://imagetopoetry.com${route.path === '/' ? '/' : route.path}`)
 const title = computed(() => t('seo.home.title'))
 const description = computed(() => t('seo.home.description'))
-const socialImage = 'https://imagetopoetry.com/images/examples/sunset-river.jpg'
+const socialImage = 'https://imagetopoetry.com/images/examples/sunset-river.webp'
 
 useSeoMeta({
   title,

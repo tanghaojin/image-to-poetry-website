@@ -49,6 +49,10 @@ X-Device-Fingerprint: <browser-fingerprint>
     "time": "白昼",
     "weather": "雪",
     "mood": "孤寂",
+    "moods": [
+      {"tag": "孤寂", "confidence": 0.94},
+      {"tag": "宁静", "confidence": 0.72}
+    ],
     "sceneSummary": "寒江之上，一叶孤舟独行",
     "confidence": 0.94
   },
@@ -70,7 +74,7 @@ X-Device-Fingerprint: <browser-fingerprint>
     "score": 0.93,
     "matchedTags": ["孤舟", "江河", "冬", "雪", "孤寂"],
     "reason": "孤舟、寒江和冬雪意象与画面高度相合。",
-    "algorithmVersion": "tag-score-v1"
+    "algorithmVersion": "tag-score-v2"
   },
   "meta": {
     "processingMs": 2860
@@ -81,7 +85,8 @@ X-Device-Fingerprint: <browser-fingerprint>
 约束：
 
 - `subjects` 最多 5 个；
-- `mood` 只返回最高可信的一种；
+- `moods` 按置信度从高到低返回 1～3 个不同意境，匹配器按各自置信度参与评分；
+- `mood` 保留为 `moods[0].tag`，兼容旧客户端；
 - `confidence`、`score` 范围为 0–1；
 - `poem` 必须来自 `verification_status = verified` 的本地数据；
 - 相同输入及相同识别结果使用稳定排序，只返回最高分一首；

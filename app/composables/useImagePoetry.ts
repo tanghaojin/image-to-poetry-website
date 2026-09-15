@@ -76,7 +76,7 @@ export function useImagePoetry() {
       const [image, fingerprint] = await Promise.all([sourceBlob(source), deviceFingerprint()])
       if (!fingerprint) throw new ImagePoetryError('fingerprint')
       const form = new FormData()
-      form.append('image', image, image instanceof File ? image.name : 'image.jpg')
+      form.append('image', image, image instanceof File ? image.name : 'image.webp')
       const apiBase = String(config.public.apiBase || '').replace(/\/$/, '')
       const response = await fetch(`${apiBase}/api/v1/poetry/match`, {
         method: 'POST',

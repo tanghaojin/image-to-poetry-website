@@ -6,7 +6,7 @@
 
 ## 暮江落日
 
-- 文件：`sunset-river.jpg`
+- 文件：`sunset-river.webp`
 - 摄影师：DL314 Lin
 - 照片页面：https://unsplash.com/photos/sunset-over-mountains-with-reflection-on-water-uUGLL3GNUHA
 - 本地尺寸：2400 x 3600
@@ -15,7 +15,7 @@
 
 ## 寒江孤舟
 
-- 文件：`winter-boat.jpg`
+- 文件：`winter-boat.webp`
 - 摄影师：Bernd Dittrich
 - 照片页面：https://unsplash.com/photos/a-person-in-a-small-boat-on-a-lake-4mehD_N3N5Q
 - 本地尺寸：2400 x 1295
@@ -24,7 +24,7 @@
 
 ## 山中桃花
 
-- 文件：`mountain-peach-blossom.jpg`
+- 文件：`mountain-peach-blossom.webp`
 - 摄影师：Clayton Chase
 - 照片页面：https://unsplash.com/photos/a-small-tree-with-pink-flowers-in-front-of-a-mountain-9_5ntHztVu0
 - 本地尺寸：2400 x 3195

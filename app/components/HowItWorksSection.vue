@@ -13,7 +13,7 @@
 
       <div class="analysis-story">
         <figure>
-          <img :src="assetPath('images/examples/winter-boat.jpg')" :alt="t('home.how.imageAlt')">
+          <img :src="assetPath('images/examples/winter-boat.webp')" :alt="t('home.how.imageAlt')">
           <figcaption><b>{{ t('home.how.sample') }}</b><span>{{ t('home.how.scene') }}</span><span>{{ t('home.how.season') }}</span><span>{{ t('home.how.mood') }}</span></figcaption>
         </figure>
         <div class="story-copy">

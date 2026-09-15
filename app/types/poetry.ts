@@ -4,6 +4,10 @@ export interface ImageUnderstandingResult {
   time: string
   weather: string
   mood: string
+  moods?: Array<{
+    tag: string
+    confidence: number
+  }>
   sceneSummary: string
   confidence: number
 }

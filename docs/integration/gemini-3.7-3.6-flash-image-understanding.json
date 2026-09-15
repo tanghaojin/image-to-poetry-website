@@ -1,7 +1,7 @@
 {
   "verifiedAt": "2026-09-12T17:18:20.8736360+08:00",
   "endpoint": "Google Gemini API v1beta generateContent",
-  "image": "public/images/examples/winter-boat.jpg",
+  "image": "public/images/examples/winter-boat.webp",
   "analysisCopy": {
     "width": 768,
     "height": 414,

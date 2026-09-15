@@ -68,7 +68,7 @@
         <dl class="understanding-list">
           <div><dt>{{ t('creator.subjects') }}</dt><dd>{{ understandingResult.subjects.join(' · ') }}</dd></div>
           <div><dt>{{ t('creator.time') }}</dt><dd>{{ temporalDescription }}</dd></div>
-          <div><dt>{{ t('creator.mood') }}</dt><dd>{{ understandingResult.mood }}</dd></div>
+          <div><dt>{{ t('creator.mood') }}</dt><dd>{{ moodDescription }}</dd></div>
         </dl>
         <blockquote>{{ understandingResult.sceneSummary }}</blockquote>
         <p class="confidence">{{ t('creator.confidence', { value: confidencePercent }) }}</p>
@@ -87,8 +87,10 @@
           <img :src="selectedImage" :alt="t('creator.posterPreviewAlt')">
           <div ref="posterOverlay" class="vertical-poem">
             <strong ref="posterStrong"><template v-for="line in posterLines" :key="line">{{ line }}<br></template></strong>
-            <small v-if="showAttribution" ref="posterAttribution">{{ previewAttribution }}</small>
-            <span v-if="showStamp" ref="posterStamp" class="mini-stamp">寻诗</span>
+            <small v-if="showAttribution || showStamp">
+              <span v-if="showAttribution" ref="posterAttribution">{{ previewAttribution }}</span>
+              <img v-if="showStamp" ref="posterStamp" class="mini-stamp" :src="poetryMoodSeal" alt="">
+            </small>
           </div>
         </div>
         <button type="button" class="text-action" @click="reset">{{ t('creator.chooseAgain') }}</button>
@@ -105,7 +107,6 @@
 
         <div class="controls">
           <h3>{{ t('creator.adjust') }}</h3>
-          <OptionRow v-model="layout" :label="t('creator.layout')" :items="layoutOptions" />
           <OptionRow v-model="font" :label="t('creator.font')" :items="fontOptions" />
           <OptionRow v-model="position" :label="t('creator.position')" :items="positionOptions" />
           <div class="color-row"><span>{{ t('creator.textColor') }}</span><button v-for="color in colors" :key="color.value" class="color" :class="[color.className, { selected: textColor === color.value }]" type="button" :aria-label="color.label" :aria-pressed="textColor === color.value" @click="textColor = color.value" /></div>
@@ -123,8 +124,10 @@
           <img :src="posterUrl || selectedImage" :alt="t('creator.generatedAlt')">
           <div v-if="!posterUrl" class="vertical-poem">
             <strong><template v-for="line in posterLines" :key="line">{{ line }}<br></template></strong>
-            <small v-if="showAttribution">{{ previewAttribution }}</small>
-            <span v-if="showStamp" class="mini-stamp">寻诗</span>
+            <small v-if="showAttribution || showStamp">
+              <span v-if="showAttribution">{{ previewAttribution }}</span>
+              <img v-if="showStamp" class="mini-stamp" :src="poetryMoodSeal" alt="">
+            </small>
           </div>
         </div>
       </div>
@@ -152,13 +155,14 @@ type State = 'idle' | 'analyzing' | 'understood' | 'editor' | 'generated'
 type Sample = { name: string, src: string }
 
 const assetPath = usePublicAsset()
+const poetryMoodSeal = assetPath('images/hero/seal-poetry-mood.webp')
 const { t } = useI18n()
 
 const emit = defineEmits<{ 'active-change': [active: boolean] }>()
 
 const state = ref<State>('idle')
-const selectedImage = ref(assetPath('images/examples/winter-boat.jpg'))
-const analysisSource = ref<Blob | string>(assetPath('images/examples/winter-boat.jpg'))
+const selectedImage = ref(assetPath('images/examples/winter-boat.webp'))
+const analysisSource = ref<Blob | string>(assetPath('images/examples/winter-boat.webp'))
 const understandingResult = ref<ImageUnderstandingResult | null>(null)
 const poetryMatch = ref<PoetryMatchResult | null>(null)
 const analysisError = ref('')
@@ -170,7 +174,7 @@ const font = ref('楷体')
 const position = ref('中')
 const textColor = ref('墨黑')
 const showAttribution = ref(true)
-const showStamp = ref(false)
+const showStamp = ref(true)
 const showFullPoem = ref(false)
 const isGenerating = ref(false)
 const posterUrl = ref<string | null>(null)
@@ -178,7 +182,7 @@ const posterCanvas = ref<HTMLElement | null>(null)
 const posterOverlay = ref<HTMLElement | null>(null)
 const posterStrong = ref<HTMLElement | null>(null)
 const posterAttribution = ref<HTMLElement | null>(null)
-const posterStamp = ref<HTMLElement | null>(null)
+const posterStamp = ref<HTMLImageElement | null>(null)
 let objectUrl: string | null = null
 let analysisRequestId = 0
 const { analyzeAndMatch, cancel: cancelImagePoetry } = useImagePoetry()
@@ -189,11 +193,6 @@ const colors = computed(() => [
   { value: '朱砂', label: t('creator.colors.red'), className: 'red' }
 ])
 
-const layoutOptions = computed(() => [
-  { value: '留白题诗', label: t('creator.layouts.space') },
-  { value: '古意竖排', label: t('creator.layouts.vertical') },
-  { value: '画心题跋', label: t('creator.layouts.inscription') }
-])
 const fontOptions = computed(() => [
   { value: '宋体', label: t('creator.fonts.song') },
   { value: '楷体', label: t('creator.fonts.kai') },
@@ -213,15 +212,18 @@ const posterClasses = computed(() => [
 ])
 
 const samples = computed<Sample[]>(() => [
-  { name: t('creator.samples.sunset'), src: assetPath('images/examples/sunset-river.jpg') },
-  { name: t('creator.samples.winter'), src: assetPath('images/examples/winter-boat.jpg') },
-  { name: t('creator.samples.peach'), src: assetPath('images/examples/mountain-peach-blossom.jpg') }
+  { name: t('creator.samples.sunset'), src: assetPath('images/examples/sunset-river.webp') },
+  { name: t('creator.samples.winter'), src: assetPath('images/examples/winter-boat.webp') },
+  { name: t('creator.samples.peach'), src: assetPath('images/examples/mountain-peach-blossom.webp') }
 ])
 
 const temporalDescription = computed(() => understandingResult.value
   ? [understandingResult.value.season, understandingResult.value.time, understandingResult.value.weather].filter((value, index, values) => value !== '无法确定' && values.indexOf(value) === index).join(' · ') || t('creator.unknown')
   : '')
 const confidencePercent = computed(() => Math.round((understandingResult.value?.confidence || 0) * 100))
+const moodDescription = computed(() => understandingResult.value?.moods?.map(item => item.tag).join(' · ')
+  || understandingResult.value?.mood
+  || t('creator.unknown'))
 const matchedPoemLines = computed(() => {
   const poem = poetryMatch.value?.poem
   if (!poem) return []
@@ -242,7 +244,7 @@ const verticalAttribution = computed(() => compactAttribution.value
 const previewAttribution = computed(() => position.value === '上' || position.value === '下' || layout.value !== '古意竖排'
   ? poemAttribution.value
   : verticalAttribution.value)
-const posterFilename = computed(() => `${t('common.brand')}-${poetryMatch.value?.poem.title || t('creator.poster')}.jpg`)
+const posterFilename = computed(() => `${t('common.brand')}-${poetryMatch.value?.poem.title || t('creator.poster')}.webp`)
 
 async function beginAnalysis(src: string, source: Blob | string = src) {
   const requestId = ++analysisRequestId
@@ -297,8 +299,8 @@ function reset() {
   emit('active-change', false)
   if (posterUrl.value) { URL.revokeObjectURL(posterUrl.value); posterUrl.value = null }
   if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null }
-  selectedImage.value = assetPath('images/examples/winter-boat.jpg')
-  analysisSource.value = assetPath('images/examples/winter-boat.jpg')
+  selectedImage.value = assetPath('images/examples/winter-boat.webp')
+  analysisSource.value = assetPath('images/examples/winter-boat.webp')
   understandingResult.value = null
   poetryMatch.value = null
   analysisError.value = ''
@@ -316,29 +318,29 @@ function loadPosterImage() {
   })
 }
 
-type TextGlow = { near: string, far: string }
+type TextGlow = { near: string, middle: string, far: string }
 
 function drawGlowText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, glow: TextGlow) {
   const ink = ctx.fillStyle
 
   ctx.save()
   ctx.shadowColor = glow.far
-  ctx.shadowBlur = Math.max(1, size * .48)
+  ctx.shadowBlur = Math.max(1, size * 4)
   ctx.shadowOffsetX = 0
   ctx.shadowOffsetY = 0
   ctx.fillText(text, x, y)
 
+  ctx.shadowColor = glow.middle
+  ctx.shadowBlur = Math.max(1, size * 2.58)
+  ctx.fillText(text, x, y)
+
   ctx.shadowColor = glow.near
-  ctx.shadowBlur = Math.max(1, size * .18)
+  ctx.shadowBlur = Math.max(1, size * 1.26)
   ctx.fillText(text, x, y)
   ctx.restore()
 
   ctx.fillStyle = ink
   ctx.fillText(text, x, y)
-}
-
-function drawVerticalText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number) {
-  ;[...text].forEach((char, index) => ctx.fillText(char, x, y + index * size * 1.08))
 }
 
 function drawHorizontalText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, letterSpacing: number, glow: TextGlow) {
@@ -388,8 +390,9 @@ async function renderPosterBlob() {
     const size = previewFontSize * scaleX
     const ink = strongStyle.color || '#171512'
     const glow = {
-      near: strongStyle.getPropertyValue('--poster-glow-near').trim() || 'rgba(255, 250, 240, .72)',
-      far: strongStyle.getPropertyValue('--poster-glow-far').trim() || 'rgba(255, 250, 240, .32)'
+      near: strongStyle.getPropertyValue('--poster-glow-near').trim() || 'rgba(255, 250, 240, .98)',
+      middle: strongStyle.getPropertyValue('--poster-glow-middle').trim() || 'rgba(255, 250, 240, .82)',
+      far: strongStyle.getPropertyValue('--poster-glow-far').trim() || 'rgba(255, 250, 240, .58)'
     }
     // Canvas 直接复用预览文字的实际计算字体，避免 DOM 预览与导出图片
     // 分别落到不同的字体回退链，造成字号和字距看起来不一致。
@@ -476,21 +479,15 @@ async function renderPosterBlob() {
 
     if (showStamp.value && posterStamp.value) {
       const stampRect = posterStamp.value.getBoundingClientRect()
-      const stampStyle = getComputedStyle(posterStamp.value)
       const stampX = (stampRect.left - previewRect.left) * scaleX
       const stampY = (stampRect.top - previewRect.top) * scaleY
       const stampW = stampRect.width * scaleX
       const stampH = stampRect.height * scaleY
-      ctx.strokeStyle = '#b54836'
-      ctx.lineWidth = Math.max(2, canvas.width / 900)
-      ctx.strokeRect(stampX, stampY, stampW, stampH)
-      ctx.fillStyle = '#b54836'
-      const stampFontSize = numericStyle(stampStyle, 'fontSize', 10) * scaleX
-      ctx.font = `${stampFontSize}px KaiTi, serif`
-      drawVerticalText(ctx, '寻诗', stampX + stampW / 2, stampY + stampFontSize * .35, stampFontSize)
+      if (!posterStamp.value.complete) await posterStamp.value.decode()
+      ctx.drawImage(posterStamp.value, stampX, stampY, stampW, stampH)
     }
 
-    return await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', .94))
+    return await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/webp', .94))
   } catch {
     return null
   }
@@ -567,14 +564,16 @@ onUnmounted(() => {
 .vertical-poem { position: absolute; top: 13%; right: 8%; display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 10px; color: var(--poster-ink); font-family: var(--serif); writing-mode: vertical-rl; }
 .poster-canvas.layout-古意竖排 .vertical-poem { right: 16%; }
 .poster-canvas.layout-古意竖排 .vertical-poem small { position: absolute; top: 0; right: -2.2em; margin: 0; font-size: clamp(14px, 1.1vw, 18px); line-height: 1; letter-spacing: .04em; white-space: nowrap; writing-mode: vertical-rl; text-orientation: upright; }
-.poster-canvas.layout-古意竖排 .mini-stamp { position: absolute; top: -4.2em; right: -3.8em; margin: 0; }
+.poster-canvas.layout-古意竖排.position-中 .vertical-poem small { display: flex; flex-direction: column; align-items: center; writing-mode: horizontal-tb; }
+.poster-canvas.layout-古意竖排.position-中 .vertical-poem small > span { writing-mode: vertical-rl; text-orientation: upright; }
+.poster-canvas.layout-古意竖排.position-中 .vertical-poem .mini-stamp { margin: .55em 0 0; }
 .poster-canvas.font-宋体 .vertical-poem { font-family: SimSun, var(--serif); }
 .poster-canvas.font-楷体 .vertical-poem { font-family: KaiTi, STKaiti, var(--serif); }
 .poster-canvas.font-行楷 .vertical-poem { font-family: STXingkai, KaiTi, var(--serif); }
-.poster-canvas.color-墨黑 { --poster-ink: #171512; --poster-glow-near: rgba(255,250,240,.72); --poster-glow-far: rgba(255,250,240,.32); }
-.poster-canvas.color-米白 { --poster-ink: #fffaf0; --poster-glow-near: rgba(23,21,18,.62); --poster-glow-far: rgba(23,21,18,.28); }
-.poster-canvas.color-朱砂 { --poster-ink: #b54836; --poster-glow-near: rgba(255,247,232,.68); --poster-glow-far: rgba(255,247,232,.3); }
-.poster-canvas .vertical-poem strong, .poster-canvas .vertical-poem small { text-shadow: 0 0 .18em var(--poster-glow-near), 0 0 .48em var(--poster-glow-far); }
+.poster-canvas.color-墨黑 { --poster-ink: #171512; --poster-glow-near: rgba(255,250,240,.98); --poster-glow-middle: rgba(255,250,240,.82); --poster-glow-far: rgba(255,250,240,.58); }
+.poster-canvas.color-米白 { --poster-ink: #fffaf0; --poster-glow-near: rgba(23,21,18,.94); --poster-glow-middle: rgba(23,21,18,.76); --poster-glow-far: rgba(23,21,18,.5); }
+.poster-canvas.color-朱砂 { --poster-ink: #b54836; --poster-glow-near: rgba(82,22,18,.72); --poster-glow-middle: rgba(255,230,190,.68); --poster-glow-far: rgba(247,236,218,.38); }
+.poster-canvas .vertical-poem strong, .poster-canvas .vertical-poem small { text-shadow: 0 0 .46em var(--poster-glow-near), 0 0 1.58em var(--poster-glow-middle), 0 0 3em var(--poster-glow-far); }
 .poster-canvas.position-上 .vertical-poem { top: 5%; }
 .poster-canvas.layout-留白题诗 .vertical-poem, .poster-canvas.layout-画心题跋 .vertical-poem { top: auto; right: 7%; bottom: 8%; left: 7%; display: grid; justify-items: center; gap: 5px; padding: 18px; text-align: center; writing-mode: horizontal-tb; }
 .poster-canvas.layout-留白题诗 .vertical-poem { background: rgba(17,15,12,.38); }
@@ -583,15 +582,13 @@ onUnmounted(() => {
 .poster-canvas.layout-留白题诗.position-中 .vertical-poem, .poster-canvas.layout-画心题跋.position-中 .vertical-poem { top: 40%; bottom: auto; }
 .poster-canvas.position-下 .vertical-poem { top: auto; right: auto; bottom: 6%; left: 6%; display: grid; justify-items: start; gap: 9px; padding: 0; background: transparent; text-align: left; writing-mode: horizontal-tb; }
 .poster-canvas.position-下 .vertical-poem strong { font-size: clamp(20px, 2.1vw, 34px); line-height: 1.5; letter-spacing: .05em; }
-.poster-canvas.position-下 .vertical-poem small, .poster-canvas.layout-古意竖排.position-下 .vertical-poem small { position: static; margin: 0; font-size: clamp(10px, .85vw, 13px); line-height: 1.2; letter-spacing: .02em; white-space: nowrap; writing-mode: horizontal-tb; text-orientation: mixed; }
-.poster-canvas.position-下 .mini-stamp, .poster-canvas.layout-古意竖排.position-下 .mini-stamp { position: absolute; top: auto; right: -3.2em; bottom: 0; margin: 0; }
+.poster-canvas.position-下 .vertical-poem small, .poster-canvas.layout-古意竖排.position-下 .vertical-poem small { position: static; margin: 0; line-height: 1.2; letter-spacing: .02em; white-space: nowrap; writing-mode: horizontal-tb; text-orientation: mixed; }
 .poster-canvas.position-上 .vertical-poem { top: 6%; right: 6%; bottom: auto; left: auto; display: grid; justify-items: end; gap: 7px; padding: 0; background: transparent; text-align: right; writing-mode: horizontal-tb; }
 .poster-canvas.position-上 .vertical-poem strong { line-height: 1.42; letter-spacing: .05em; }
 .poster-canvas.position-上 .vertical-poem small, .poster-canvas.layout-古意竖排.position-上 .vertical-poem small { position: static; order: -1; margin: 0; font-size: clamp(13px, 1.15vw, 18px); line-height: 1.25; letter-spacing: .03em; white-space: nowrap; writing-mode: horizontal-tb; text-orientation: mixed; }
-.poster-canvas.position-上 .mini-stamp, .poster-canvas.layout-古意竖排.position-上 .mini-stamp { position: absolute; top: 0; right: calc(100% + 10px); margin: 0; }
 .vertical-poem strong { display: block; font-size: clamp(20px, 2.1vw, 34px); font-weight: 700; line-height: 1.28; letter-spacing: .08em; }
 .vertical-poem small { margin-top: 20px; font-size: 12px; }
-.mini-stamp { margin-top: 110px; padding: 5px 3px; border: 1px solid var(--cinnabar); border-radius: 3px; color: var(--cinnabar); font-size: 10px; }
+.poster-canvas .mini-stamp { display: inline-block; width: 1em; height: auto; max-height: none; margin-inline-start: .55em; object-fit: contain; vertical-align: middle; }
 .poem-result { margin: 25px 0 7px; font: 700 33px/1.4 var(--serif); }
 .poem-source { margin: 0; color: var(--muted); font-family: var(--serif); }
 .match-reason { margin: 20px 0 10px; color: var(--muted); line-height: 1.7; }
@@ -629,7 +626,7 @@ onUnmounted(() => {
   .upload-board h2 { font-size: 24px; }.upload-button { width: 280px; min-width: 0; }
   .state-idle { gap: 18px; }.sample-picker button { min-height: 78px; }
   .preview-frame { padding-top: 34px; }.poster-preview { padding-inline: 6px; }
-  .vertical-poem { top: 8%; right: 4%; gap: 3px; }.vertical-poem strong { font-size: 13px; line-height: 1.22; }.poster-canvas.layout-古意竖排 .vertical-poem small { right: -2.15em; font-size: 11px; }.vertical-poem small { margin-top: 8px; }.mini-stamp { margin-top: 42px; font-size: 8px; }.poster-canvas.position-上 .vertical-poem { top: 5%; right: 5%; gap: 4px; }.poster-canvas.position-上 .vertical-poem small, .poster-canvas.layout-古意竖排.position-上 .vertical-poem small { font-size: 11px; }
+  .vertical-poem { top: 8%; right: 4%; gap: 3px; }.vertical-poem strong { font-size: 13px; line-height: 1.22; }.poster-canvas.layout-古意竖排 .vertical-poem small { right: -2.15em; font-size: 11px; }.vertical-poem small { margin-top: 8px; }.poster-canvas.position-上 .vertical-poem { top: 5%; right: 5%; gap: 4px; }.poster-canvas.position-上 .vertical-poem small, .poster-canvas.layout-古意竖排.position-上 .vertical-poem small { font-size: 11px; }
   .poem-result { font-size: 27px; }.match-reason { font-size: 14px; }.switch-row { align-items: flex-start; flex-direction: column; }
 }
 </style>
