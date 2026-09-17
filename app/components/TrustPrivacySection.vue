@@ -1,5 +1,5 @@
 <template>
-  <section id="about" class="trust-section">
+  <section id="about" class="deferred-section trust-section">
     <div class="container-wide">
       <span class="section-kicker">{{ t('home.trust.kicker') }}</span>
       <h2 class="display-title">{{ t('home.trust.title') }}</h2>

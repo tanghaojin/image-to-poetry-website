@@ -1,5 +1,5 @@
 <template>
-  <section class="closing-section">
+  <section class="deferred-section closing-section">
     <div class="closing-main">
       <div class="container-wide closing-grid">
         <div class="closing-copy">
@@ -10,7 +10,7 @@
           <small>{{ t('home.cta.note') }}</small>
         </div>
         <figure>
-          <img :src="assetPath('images/examples/sunset-river.webp')" :alt="t('home.cta.imageAlt')">
+          <img :src="assetPath('images/examples/sunset-river-960.webp')" width="960" height="1440" loading="lazy" decoding="async" :alt="t('home.cta.imageAlt')">
           <blockquote>一道残阳铺水中，<br>半江瑟瑟半江红。</blockquote>
         </figure>
       </div>

@@ -3,7 +3,7 @@
     <div class="container-wide nav-inner">
       <NuxtLink :to="localePath('/')" class="brand" :aria-label="t('common.homeAria')">
         <span>{{ t('common.brand') }}</span>
-        <img class="brand-stamp" :src="assetPath('images/hero/seal-poetry-mood.webp')" :alt="t('common.stampAlt')">
+        <img class="brand-stamp" :src="assetPath('images/hero/seal-poetry-mood-80.webp')" width="80" height="143" decoding="async" :alt="t('common.stampAlt')">
       </NuxtLink>
 
       <nav class="desktop-nav" :aria-label="t('common.mainNav')">

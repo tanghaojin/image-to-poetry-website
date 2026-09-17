@@ -1,5 +1,5 @@
 <template>
-  <section id="faq" class="faq-section">
+  <section id="faq" class="deferred-section faq-section">
     <div class="container-wide faq-grid">
       <div class="faq-heading">
         <span class="section-kicker dark">{{ t('home.faq.kicker') }}</span>

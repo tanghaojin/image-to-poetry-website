@@ -1,5 +1,5 @@
 <template>
-  <section id="how-it-works" class="how-section ink-landscape">
+  <section id="how-it-works" class="deferred-section how-section ink-landscape">
     <div class="container-wide">
       <span class="section-kicker">{{ t('home.how.kicker') }}</span>
       <h2 class="display-title">{{ t('home.how.title') }}</h2>
@@ -13,7 +13,7 @@
 
       <div class="analysis-story">
         <figure>
-          <img :src="assetPath('images/examples/winter-boat.webp')" :alt="t('home.how.imageAlt')">
+          <img :src="assetPath('images/examples/winter-boat-960.webp')" width="960" height="518" loading="lazy" decoding="async" :alt="t('home.how.imageAlt')">
           <figcaption><b>{{ t('home.how.sample') }}</b><span>{{ t('home.how.scene') }}</span><span>{{ t('home.how.season') }}</span><span>{{ t('home.how.mood') }}</span></figcaption>
         </figure>
         <div class="story-copy">

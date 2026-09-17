@@ -155,3 +155,9 @@ a:focus-visible {
     transition-duration: .01ms !important;
   }
 }
+
+/* Keep offscreen sections in SSR and defer their layout/paint. */
+.deferred-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}

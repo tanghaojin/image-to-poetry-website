@@ -21,7 +21,7 @@
 
       <div class="sample-picker">
         <button v-for="sample in samples" :key="sample.src" type="button" @click="useSample(sample)">
-          <img :src="sample.src" :alt="sample.name">
+          <img :src="sample.thumbnail" :alt="sample.name" :width="sample.width" :height="sample.height" decoding="async">
           <small>{{ sample.name }}</small>
         </button>
       </div>
@@ -152,7 +152,7 @@
 import type { ImageUnderstandingResult, PoetryMatchResult } from '~/types/poetry'
 
 type State = 'idle' | 'analyzing' | 'understood' | 'editor' | 'generated'
-type Sample = { name: string, src: string }
+type Sample = { name: string, src: string, thumbnail: string, width: number, height: number }
 
 const assetPath = usePublicAsset()
 const poetryMoodSeal = assetPath('images/hero/seal-poetry-mood.webp')
@@ -185,6 +185,7 @@ const posterAttribution = ref<HTMLElement | null>(null)
 const posterStamp = ref<HTMLImageElement | null>(null)
 let objectUrl: string | null = null
 let analysisRequestId = 0
+let preparationController: AbortController | null = null
 const { analyzeAndMatch, cancel: cancelImagePoetry } = useImagePoetry()
 
 const colors = computed(() => [
@@ -212,9 +213,9 @@ const posterClasses = computed(() => [
 ])
 
 const samples = computed<Sample[]>(() => [
-  { name: t('creator.samples.sunset'), src: assetPath('images/examples/sunset-river.webp') },
-  { name: t('creator.samples.winter'), src: assetPath('images/examples/winter-boat.webp') },
-  { name: t('creator.samples.peach'), src: assetPath('images/examples/mountain-peach-blossom.webp') }
+  { name: t('creator.samples.sunset'), src: assetPath('images/examples/sunset-river.webp'), thumbnail: assetPath('images/examples/sunset-river-320.webp'), width: 320, height: 480 },
+  { name: t('creator.samples.winter'), src: assetPath('images/examples/winter-boat.webp'), thumbnail: assetPath('images/examples/winter-boat-320.webp'), width: 320, height: 173 },
+  { name: t('creator.samples.peach'), src: assetPath('images/examples/mountain-peach-blossom.webp'), thumbnail: assetPath('images/examples/mountain-peach-blossom-320.webp'), width: 320, height: 426 }
 ])
 
 const temporalDescription = computed(() => understandingResult.value
@@ -247,6 +248,8 @@ const previewAttribution = computed(() => position.value === '上' || position.v
 const posterFilename = computed(() => `${t('common.brand')}-${poetryMatch.value?.poem.title || t('creator.poster')}.webp`)
 
 async function beginAnalysis(src: string, source: Blob | string = src) {
+  preparationController?.abort()
+  preparationController = null
   const requestId = ++analysisRequestId
   cancelImagePoetry()
   errorMessage.value = ''
@@ -274,7 +277,7 @@ async function beginAnalysis(src: string, source: Blob | string = src) {
 function useSample(sample: Sample) { beginAnalysis(sample.src) }
 function retryAnalysis() { beginAnalysis(selectedImage.value, analysisSource.value) }
 
-function handleFile(file?: File) {
+async function handleFile(file?: File) {
   if (!file) return
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
     errorMessage.value = t('creator.invalidType')
@@ -286,7 +289,30 @@ function handleFile(file?: File) {
   }
   if (objectUrl) URL.revokeObjectURL(objectUrl)
   objectUrl = URL.createObjectURL(file)
-  beginAnalysis(objectUrl, file)
+  preparationController?.abort()
+  cancelImagePoetry()
+  const controller = new AbortController()
+  preparationController = controller
+  const requestId = ++analysisRequestId
+  errorMessage.value = ''
+  analysisError.value = ''
+  understandingResult.value = null
+  poetryMatch.value = null
+  selectedImage.value = objectUrl
+  analysisSource.value = file
+  state.value = 'analyzing'
+  emit('active-change', true)
+  nextTick(() => document.getElementById('top')?.scrollIntoView({ behavior: 'smooth' }))
+  try {
+    const prepared = await prepareAnalysisImage(file, controller.signal)
+    if (requestId !== analysisRequestId || controller.signal.aborted) return
+    preparationController = null
+    await beginAnalysis(objectUrl, prepared)
+  } catch (error) {
+    if (requestId !== analysisRequestId || (error instanceof DOMException && error.name === 'AbortError')) return
+    preparationController = null
+    analysisError.value = t('errors.image')
+  }
 }
 
 function onFileChange(event: Event) { handleFile((event.target as HTMLInputElement).files?.[0]) }
@@ -294,6 +320,8 @@ function onDrop(event: DragEvent) { dragging.value = false; handleFile(event.dat
 
 function reset() {
   analysisRequestId += 1
+  preparationController?.abort()
+  preparationController = null
   cancelImagePoetry()
   state.value = 'idle'
   emit('active-change', false)

@@ -44,6 +44,18 @@ export default defineNuxtConfig({
     ]
   },
   sitemap: {},
+  hooks: {
+    'build:manifest'(manifest) {
+      // Dynamic import alone still lets Nuxt emit an SSR prefetch hint.
+      // Keep fingerprint collection and its download behind explicit analysis.
+      for (const [id, chunk] of Object.entries(manifest)) {
+        if (`${id} ${chunk.src || ''}`.includes('@fingerprintjs')) {
+          chunk.prefetch = false
+          chunk.preload = false
+        }
+      }
+    }
+  },
   css: ['~/assets/css/main.css'],
   vite: {
     plugins: [tailwindcss()]
@@ -55,7 +67,7 @@ export default defineNuxtConfig({
       titleTemplate: '%s',
       link: [
         { rel: 'icon', type: 'image/x-icon', href: `${baseURL}favicon.ico` },
-        { rel: 'icon', type: 'image/png', sizes: '512x512', href: `${baseURL}favicon-poem.png` }
+        { rel: 'icon', type: 'image/png', sizes: '64x64', href: `${baseURL}favicon-poem.png` }
       ],
       meta: [
         {

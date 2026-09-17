@@ -1,4 +1,3 @@
-import FingerprintJS from '@fingerprintjs/fingerprintjs'
 import type { ImagePoetryResult } from '~/types/poetry'
 
 type ImagePoetryErrorCode = 'fingerprint' | 'image' | 'busy' | 'timeout' | 'provider' | 'corpus' | 'network' | 'response-format' | 'request'
@@ -28,7 +27,8 @@ function fallbackFingerprint() {
 
 async function deviceFingerprint() {
   if (!fingerprintPromise) {
-    fingerprintPromise = FingerprintJS.load()
+    fingerprintPromise = import('@fingerprintjs/fingerprintjs')
+      .then(({ default: FingerprintJS }) => FingerprintJS.load())
       .then(agent => agent.get())
       .then(result => result.visitorId)
       .catch(() => fallbackFingerprint())
@@ -36,9 +36,9 @@ async function deviceFingerprint() {
   return fingerprintPromise
 }
 
-async function sourceBlob(source: Blob | string) {
+async function sourceBlob(source: Blob | string, signal: AbortSignal) {
   if (source instanceof Blob) return source
-  const response = await fetch(source)
+  const response = await fetch(source, { signal })
   if (!response.ok) throw new ImagePoetryError('image')
   return response.blob()
 }
@@ -73,7 +73,8 @@ export function useImagePoetry() {
       controller.abort()
     }, REQUEST_TIMEOUT)
     try {
-      const [image, fingerprint] = await Promise.all([sourceBlob(source), deviceFingerprint()])
+      const [image, fingerprint] = await Promise.all([sourceBlob(source, controller.signal), deviceFingerprint()])
+      controller.signal.throwIfAborted()
       if (!fingerprint) throw new ImagePoetryError('fingerprint')
       const form = new FormData()
       form.append('image', image, image instanceof File ? image.name : 'image.webp')

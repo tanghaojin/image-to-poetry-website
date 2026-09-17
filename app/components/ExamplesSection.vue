@@ -1,5 +1,5 @@
 <template>
-  <section id="examples" class="examples-section">
+  <section id="examples" class="deferred-section examples-section">
     <div class="container-wide">
       <span class="section-kicker">{{ t('home.examples.kicker') }}</span>
       <div class="section-heading">
@@ -14,7 +14,7 @@
         <article class="work work-main">
           <span class="work-number">01</span>
           <div class="work-image sunset" :class="{ original: activeOriginal === 0 }">
-            <img :src="assetPath('images/examples/sunset-river.webp')" :alt="t('home.examples.sunsetAlt')">
+            <img :src="assetPath('images/examples/sunset-river-960.webp')" width="960" height="1440" loading="lazy" decoding="async" :alt="t('home.examples.sunsetAlt')">
             <div class="horizontal-verse">
               <strong>一道残阳铺水中，<br>半江瑟瑟半江红。</strong>
               <span>唐 · 白居易《暮江吟》</span>
@@ -26,7 +26,7 @@
         <article class="work work-winter">
           <span class="work-number">02</span>
           <div class="work-image" :class="{ original: activeOriginal === 1 }">
-            <img :src="assetPath('images/examples/winter-boat.webp')" :alt="t('home.examples.winterAlt')">
+            <img :src="assetPath('images/examples/winter-boat-960.webp')" width="960" height="518" loading="lazy" decoding="async" :alt="t('home.examples.winterAlt')">
             <div class="vertical-verse"><strong>孤舟蓑笠翁，<br>独钓寒江雪。</strong><span>唐 · 柳宗元《江雪》</span></div>
           </div>
           <button type="button" :aria-pressed="activeOriginal === 1" @click="toggleOriginal(1)"><Icon :name="activeOriginal === 1 ? 'heroicons:sparkles' : 'heroicons:magnifying-glass'" /> {{ activeOriginal === 1 ? t('home.examples.viewPoem') : t('home.examples.viewOriginal') }}</button>
@@ -35,7 +35,7 @@
         <article class="work work-peach">
           <span class="work-number">03</span>
           <div class="work-image peach-frame" :class="{ original: activeOriginal === 2 }">
-            <img :src="assetPath('images/examples/mountain-peach-blossom.webp')" :alt="t('home.examples.peachAlt')">
+            <img :src="assetPath('images/examples/mountain-peach-blossom-960.webp')" width="960" height="1278" loading="lazy" decoding="async" :alt="t('home.examples.peachAlt')">
             <div class="peach-verse"><strong>人间四月芳菲尽，<br>山寺桃花始盛开。</strong><span>唐 · 白居易《大林寺桃花》</span></div>
           </div>
           <button type="button" :aria-pressed="activeOriginal === 2" @click="toggleOriginal(2)"><Icon :name="activeOriginal === 2 ? 'heroicons:sparkles' : 'heroicons:magnifying-glass'" /> {{ activeOriginal === 2 ? t('home.examples.viewPoem') : t('home.examples.viewOriginal') }}</button>

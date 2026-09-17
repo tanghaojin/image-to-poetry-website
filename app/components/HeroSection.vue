@@ -1,7 +1,7 @@
 <template>
   <section id="top" class="hero-section ink-landscape" :class="{ 'creator-active': creatorActive }">
-    <span v-show="!creatorActive" class="hero-ink hero-ink-left" :style="{ backgroundImage: `url(${assetPath('images/hero/ink-landscape-left.webp')})` }" aria-hidden="true" />
-    <span v-show="!creatorActive" class="hero-ink hero-ink-right" :style="{ backgroundImage: `url(${assetPath('images/hero/ink-mountains-right.webp')})` }" aria-hidden="true" />
+    <span v-show="!creatorActive" class="hero-ink hero-ink-left" :style="{ backgroundImage: `url(${assetPath('images/hero/ink-landscape-left-1250.webp')})` }" aria-hidden="true" />
+    <span v-show="!creatorActive" class="hero-ink hero-ink-right" :style="{ backgroundImage: `url(${assetPath('images/hero/ink-mountains-right-900.webp')})` }" aria-hidden="true" />
 
     <div class="container-wide hero-stage">
       <div v-show="!creatorActive" class="hero-copy">
@@ -10,7 +10,7 @@
         <p class="hero-subtitle">{{ t('home.hero.subtitle') }}</p>
         <p class="hero-trust">{{ t('home.hero.trust1') }} <i /> {{ t('home.hero.trust2') }} <i /> {{ t('home.hero.trust3') }}</p>
         <div class="side-note" aria-hidden="true">
-          <img :src="assetPath('images/hero/seal-brand.webp')" :alt="t('home.hero.sealAlt')">
+          <img :src="assetPath('images/hero/seal-brand-128.webp')" width="128" height="128" decoding="async" :alt="t('home.hero.sealAlt')">
           <span>{{ t('home.hero.note1') }}<br>{{ t('home.hero.note2') }}</span>
         </div>
       </div>
